@@ -1,96 +1,151 @@
 <!DOCTYPE html>
 <html lang="he" dir="rtl">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <meta name="description" content="Sahar Beauty - זימון תורים אונליין">
-    <title>Sahar Beauty - זימון תורים</title>
-    <link rel="stylesheet" href="style.css">
-    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/flatpickr/dist/flatpickr.min.css">
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="description" content="Sahar Beauty — Bridal & Event Makeup Artist">
+  <title>Sahar Beauty — Bridal & Event Makeup Artist</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@400;500;600;700&family=Montserrat:wght@300;400;500;600&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="style.css">
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/flatpickr/dist/flatpickr.min.css">
 </head>
-<body>
-    <header>
-        <button onclick="window.location.href='admin.html'" class="admin-btn">
-Owner Login
-
-</button>
-    </header>
-    <div class="container">
-        <header>
-              <a href="index.html" class="logo-link">
-    <img src="images/Logo.png" alt="Sahar Beauty Logo" class="logo-img">
-  </a>
-            <div class="top-actions">
-    <a href="gallery.html" class="gallery-link">גלריה</a>
-            <p class="subtitle">זימון תורים קל ומהיר</p>
-        </header>
-
-        <main>
-            <form id="bookingForm">
-                <h2>קבע תור עכשיו</h2>
-                
-                <div class="form-group">
-                    <label for="name">👤 שם מלא</label>
-                    <input 
-                        type="text" 
-                        id="name" 
-                        name="customerName" 
-                        placeholder="שם לקוח" 
-                        required 
-                        minlength="2"
-                        autocomplete="name"
-                    >
-                </div>
-
-                <div class="form-group">
-                    <label for="phone">📞 טלפון</label>
-                    <input 
-                        type="tel" 
-                        id="phone" 
-                        name="customerPhone" 
-                        placeholder="0501234567" 
-                        required 
-                        pattern="^05\d{8}$"
-                        autocomplete="tel"
-                    >
-                    <small>לדוגמה: 0501234567</small>
-                </div>
-
-                <div class="form-group">
-                    <label for="service">✨ סוג שירות</label>
-                    <select id="service" name="service" required>
-                    </select>
-                    <p id="servicePriceDisplay"></p>
-                </div>
-
-                <div class="form-group">
-                    <label for="date">📅 תאריך</label>
-<input type="text" id="date" name="date" required readonly>                </div>
-
-                <div class="form-group">
-                    <label for="time">🕐 שעת סיום התור</label>
-                    <select id="time" name="time" required disabled>
-                        <option value="">קודם בחרי תאריך ושירות</option>
-                    </select>
-                    <small id="availableMessage"></small>
-                </div>
-
-<button type="button" onclick="submitBooking(event)">קבע תור</button>
-
-                <div id="messageBox"></div>
-            </form>
-
-            <div class="info-box">
-
-            </div>
-        </main>
-
-        <footer>
-            <p>© 2026 Sahar Beauty - כל הזכויות שמורות</p>
-        </footer>
+<body class="home-page">
+  <header class="site-header">
+    <a href="#home" class="wordmark" aria-label="Sahar Beauty home">Sahar Beauty</a>
+    <button class="menu-toggle" type="button" aria-label="Open navigation" aria-expanded="false">☰</button>
+    <nav class="main-nav" aria-label="Primary navigation">
+      <a href="#about" data-i18n="navAbout">אודות</a>
+      <a href="#services" data-i18n="navServices">שירותים</a>
+      <a href="gallery.html" data-i18n="navPortfolio">גלריה</a>
+      <a href="#testimonials" data-i18n="navReviews">המלצות</a>
+      <a href="#contact" data-i18n="navContact">יצירת קשר</a>
+    </nav>
+    <div class="header-actions">
+      <div class="language-switcher" aria-label="Language selector">
+        <button type="button" data-lang="ar">AR</button>
+        <button type="button" data-lang="he" class="active">HE</button>
+        <button type="button" data-lang="en">EN</button>
+      </div>
+      <a href="#booking" class="header-book" data-i18n="bookNow">קבעי תור</a>
     </div>
+  </header>
+
+  <main>
+    <section class="hero" id="home">
+      <div class="hero-image" role="img" aria-label="Luxury bridal makeup editorial"></div>
+      <div class="hero-content reveal">
+        <p class="eyebrow" data-i18n="heroEyebrow">איפור כלות ואירועים</p>
+        <h1>Sahar Beauty</h1>
+        <p class="hero-tagline">Bridal &amp; Event Makeup Artist</p>
+        <p class="hero-copy" data-i18n="heroCopy">יופי טבעי, נוכחות שקטה וחוויה אישית שמרגישה יוקרתית מהרגע הראשון.</p>
+        <a href="#booking" class="primary-cta" data-i18n="bookNow">קבעי תור</a>
+      </div>
+      <a href="#about" class="scroll-cue" aria-label="Scroll to about">↓</a>
+    </section>
+
+    <section class="philosophy section-pad reveal" id="about">
+      <div class="section-number">01</div>
+      <div class="section-heading">
+        <p class="eyebrow" data-i18n="aboutEyebrow">הסיפור של Sahar Beauty</p>
+        <h2 data-i18n="aboutTitle">יופי שמרגיש בדיוק כמוך.</h2>
+      </div>
+      <div class="about-copy">
+        <p data-i18n="aboutP1">Sahar היא מאפרת המתמחה בכלות ובאיפור ערב, עם ניסיון מקצועי וגישה מדויקת שמדגישה את היופי הטבעי במקום להסתיר אותו.</p>
+        <p data-i18n="aboutP2">כל מפגש בנוי כחוויה רגועה, אישית ומוקפדת — משיחת ההיכרות וההזמנה ועד הרגע האחרון של האירוע.</p>
+        <div class="signature">Sahar</div>
+      </div>
+    </section>
+
+    <section class="services-section section-pad" id="services">
+      <div class="center-heading reveal">
+        <p class="eyebrow" data-i18n="servicesEyebrow">השירותים שלנו</p>
+        <h2 data-i18n="servicesTitle">נוצר במיוחד לרגע שלך</h2>
+      </div>
+      <div class="services-grid">
+        <article class="service-card reveal"><span>01</span><div class="service-visual service-one"></div><h3 data-i18n="serviceBridal">איפור כלות</h3><p data-i18n="serviceBridalText">מראה עמיד, מצולם ומדויק שמלווה אותך ברכות לאורך היום.</p></article>
+        <article class="service-card reveal"><span>02</span><div class="service-visual service-two"></div><h3 data-i18n="serviceEngagement">איפור אירוסין</h3><p data-i18n="serviceEngagementText">זוהר אלגנטי ומאוזן לערב חד־פעמי ובלתי נשכח.</p></article>
+        <article class="service-card reveal"><span>03</span><div class="service-visual service-three"></div><h3 data-i18n="serviceEvent">איפור אירועים</h3><p data-i18n="serviceEventText">מראה מחמיא ומוקפד שמותאם לסגנון, לבגד ולתאורה.</p></article>
+        <article class="service-card reveal"><span>04</span><div class="service-visual service-four"></div><h3 data-i18n="servicePhoto">איפור לצילומים</h3><p data-i18n="servicePhotoText">איפור מקצועי שמעניק עומק, אחידות ונוכחות מול המצלמה.</p></article>
+      </div>
+      <div class="coming-soon reveal">
+        <p class="eyebrow" data-i18n="comingSoon">בקרוב</p>
+        <div><span data-i18n="masterclasses">כיתות אמן וקורסי איפור</span><span>•</span><span data-i18n="training">הכשרה מקצועית</span><span>•</span><span data-i18n="privateLessons">שיעורים פרטיים 1:1</span></div>
+      </div>
+    </section>
+
+    <section class="portfolio-preview section-pad reveal" id="portfolio">
+      <div class="portfolio-copy">
+        <p class="eyebrow" data-i18n="portfolioEyebrow">עבודות נבחרות</p>
+        <h2 data-i18n="portfolioTitle">רגעים של יופי שקט</h2>
+        <p data-i18n="portfolioText">גלריית כלות ואירועים, לצד אפשרות לשילוב סרטוני Instagram Reels ועבודות וידאו.</p>
+        <a href="gallery.html" class="text-link" data-i18n="viewGallery">לגלריה המלאה ←</a>
+      </div>
+      <div class="portfolio-mosaic" aria-label="Portfolio preview">
+        <div class="mosaic-item mosaic-one"><span data-i18n="brides">כלות</span></div>
+        <div class="mosaic-item mosaic-two"><span data-i18n="events">אירועים</span></div>
+        <a class="reel-tile" href="https://www.instagram.com/" target="_blank" rel="noopener"><span>Instagram Reels</span><b>↗</b></a>
+      </div>
+    </section>
+
+    <section class="testimonials section-pad" id="testimonials">
+      <div class="center-heading reveal"><p class="eyebrow" data-i18n="reviewsEyebrow">מילים מהלב</p><h2 data-i18n="reviewsTitle">מה הלקוחות מספרות</h2></div>
+      <div class="reviews-grid">
+        <blockquote class="review-card reveal"><div class="stars">★★★★★</div><p data-i18n="review1">“הרגשתי הכי אני, רק זוהרת ומדויקת יותר. האיפור נשאר מושלם עד סוף הערב.”</p><footer><span class="avatar">L</span><div><strong>Lina</strong><small data-i18n="bride">כלה</small></div></footer></blockquote>
+        <blockquote class="review-card reveal"><div class="stars">★★★★★</div><p data-i18n="review2">“Sahar הייתה רגועה, קשובה ומקצועית. כל התהליך הרגיש נעים ויוקרתי.”</p><footer><span class="avatar">M</span><div><strong>Maya</strong><small data-i18n="eventClient">אירוע</small></div></footer></blockquote>
+        <blockquote class="review-card reveal"><div class="stars">★★★★★</div><p data-i18n="review3">“התוצאה הצטלמה מדהים והחזיקה כל היום. קיבלתי אינסוף מחמאות.”</p><footer><span class="avatar">R</span><div><strong>Rania</strong><small data-i18n="bride">כלה</small></div></footer></blockquote>
+      </div>
+    </section>
+
+    <section class="booking-section section-pad" id="booking">
+      <div class="booking-intro reveal">
+        <p class="eyebrow" data-i18n="bookingEyebrow">הזמנת תור</p>
+        <h2 data-i18n="bookingTitle">בואי ניצור יחד את המראה שלך</h2>
+        <p data-i18n="bookingText">בחרי שירות, תאריך ושעת סיום רצויה. שעת ההגעה תחושב עבורך באופן אוטומטי.</p>
+        <div class="booking-note"><span>✦</span><p data-i18n="depositNote">לאחר שליחת הבקשה תועברי לבחירת אמצעי תשלום לערבון.</p></div>
+      </div>
+      <form id="bookingForm" class="booking-form reveal">
+        <div class="form-heading"><span data-i18n="stepLabel">הפרטים שלך</span><small>01 — 04</small></div>
+        <div class="form-row">
+          <div class="form-group"><label for="name" data-i18n="fullName">שם מלא</label><input type="text" id="name" name="customerName" required minlength="2" autocomplete="name" data-i18n-placeholder="namePlaceholder" placeholder="השם שלך"></div>
+          <div class="form-group"><label for="phone" data-i18n="phone">טלפון</label><input type="tel" id="phone" name="customerPhone" required pattern="^05\d{8}$" autocomplete="tel" placeholder="0501234567"></div>
+        </div>
+        <div class="form-group"><label for="service" data-i18n="chooseService">בחירת שירות</label><select id="service" name="service" required></select><p id="servicePriceDisplay"></p></div>
+        <div class="form-row">
+          <div class="form-group"><label for="date" data-i18n="date">תאריך</label><input type="text" id="date" name="date" required readonly></div>
+          <div class="form-group"><label for="time" data-i18n="endTime">שעת סיום התור</label><select id="time" name="time" required disabled><option value="" data-i18n="chooseFirst">בחרי תאריך ושירות</option></select><small id="availableMessage"></small></div>
+        </div>
+        <button type="button" onclick="submitBooking(event)" data-i18n="continueBooking">המשך להזמנה</button>
+        <div id="messageBox"></div>
+      </form>
+    </section>
+
+    <section class="contact-section section-pad" id="contact">
+      <div class="contact-details reveal">
+        <p class="eyebrow" data-i18n="contactEyebrow">נשארות בקשר</p>
+        <h2 data-i18n="contactTitle">יש לך שאלה לפני שמזמינים?</h2>
+        <p data-i18n="contactText">כתבי לנו ונחזור אלייך עם כל הפרטים כדי שתגיעי לרגע שלך רגועה ובטוחה.</p>
+        <div class="contact-links"><a href="https://wa.me/972503172506" target="_blank" rel="noopener">WhatsApp ↗</a><a href="https://www.instagram.com/" target="_blank" rel="noopener">Instagram ↗</a><a href="https://maps.google.com/?q=Sahar+Beauty" target="_blank" rel="noopener">Google Maps ↗</a></div>
+      </div>
+      <form class="contact-form reveal" id="contactForm">
+        <input id="contactName" type="text" data-i18n-placeholder="namePlaceholder" placeholder="השם שלך" required>
+        <input id="contactPhone" type="tel" placeholder="0501234567" required>
+        <textarea id="contactMessage" rows="4" data-i18n-placeholder="messagePlaceholder" placeholder="איך נוכל לעזור?" required></textarea>
+        <button type="submit" data-i18n="sendMessage">שליחת הודעה</button>
+      </form>
+    </section>
+  </main>
+
+  <footer class="site-footer">
+    <a href="#home" class="wordmark">Sahar Beauty</a>
+    <p>Bridal &amp; Event Makeup Artist</p>
+    <div><a href="admin.html">Owner Login</a><span>© 2026 Sahar Beauty</span></div>
+  </footer>
+
+  <a class="whatsapp-float" href="https://wa.me/972503172506" target="_blank" rel="noopener" aria-label="Chat on WhatsApp">WA</a>
   <script src="https://cdn.jsdelivr.net/npm/flatpickr"></script>
   <script src="https://cdn.jsdelivr.net/npm/flatpickr/dist/l10n/he.js"></script>
-<script src="script.js"></script>
+  <script src="script.js"></script>
 </body>
 </html>
