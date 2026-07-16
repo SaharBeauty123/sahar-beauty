@@ -3,182 +3,147 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Gallery - Sahar Beauty</title>
+  <meta name="description" content="Sahar Beauty Portfolio — a collection of timeless beauty and unforgettable bridal moments">
+  <title>Portfolio — Sahar Beauty</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@400;500;600;700&family=Montserrat:wght@300;400;500;600&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="style.css">
   <style>
-    /* ===== Gallery Grid ===== */
-    .gallery-grid {
-      display: grid;
-      grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
-      gap: 15px;
-      margin-top: 20px;
-    }
-
-    .gallery-item {
-      position: relative;
-      overflow: hidden;
-      border-radius: var(--radius, 12px);
-      border: 1px solid rgba(122,90,70,0.22);
-      cursor: pointer;
-      height: 180px; /* קיבוע גובה למניעת קריסת רינדור */
-      background: #E8D8C9;
-    }
-
-    .gallery-item img {
-      width: 100%;
-      height: 100%;
-      object-fit: cover;
-      transition: 0.4s ease;
-      display: block;
-    }
-
-    .gallery-item:hover img {
-      transform: scale(1.08);
-      filter: brightness(1.1);
-    }
-
-    .gallery-item::after {
-      content: "";
-      position: absolute;
-      inset: 0;
-      background: linear-gradient(
-        180deg,
-        transparent 60%,
-        rgba(0,0,0,0.7) 100%
-      );
-      pointer-events: none;
-    }
-
-    /* ===== inline fallback לכל מקרה שה-CSS לא נטען מיד ===== */
-    .success-banner {
-      background: #F7F3EE;
-      color: #4caf50;
-      padding: 15px;
-      margin: 15px 0;
-      border-radius: 8px;
-      border: 1px solid #4caf50;
-      text-align: center;
-      font-weight: bold;
-    }
-
-    /* ===== Modal ===== */
-    .modal {
-      position: fixed;
-      inset: 0;
-      background: rgba(0,0,0,0.9);
-      display: none;
-      align-items: center;
-      justify-content: center;
-      z-index: 999;
-    }
-
-    .modal img {
-      max-width: 90%;
-      max-height: 90%;
-      border-radius: var(--radius, 12px);
-      border: 2px solid var(--mocha, #7A5A46);
-    }
-
-    .modal.active {
-      display: flex;
-    }
+    .gallery-page{background:var(--ivory)}
+    .gallery-hero{padding:clamp(160px,18vw,230px) clamp(22px,8vw,130px) clamp(70px,9vw,125px);text-align:center;background:linear-gradient(145deg,var(--ivory),var(--ivory-alt))}
+    .gallery-hero .eyebrow{margin-bottom:22px}
+    .gallery-hero h1{font:500 clamp(72px,12vw,170px)/.75 var(--serif);letter-spacing:-.055em;text-transform:lowercase}
+    .gallery-hero p:last-child{max-width:720px;margin:42px auto 0;color:var(--muted);font:400 clamp(20px,2.5vw,32px)/1.35 var(--serif)}
+    .gallery-shell{padding:clamp(65px,9vw,125px) clamp(18px,7vw,110px)}
+    .gallery-toolbar{display:flex;align-items:center;justify-content:space-between;gap:24px;margin-bottom:36px;padding-bottom:18px;border-bottom:1px solid var(--border)}
+    .gallery-toolbar p{color:var(--muted);font-size:10px;letter-spacing:.16em;text-transform:uppercase}
+    .gallery-filters{display:flex;gap:8px}
+    .gallery-filters button{padding:8px 15px;border:1px solid var(--border);border-radius:999px;background:transparent;color:var(--muted);font-size:10px;letter-spacing:.08em;cursor:pointer}
+    .gallery-filters button.active,.gallery-filters button:hover{background:var(--mocha);border-color:var(--mocha);color:#fff;transform:none}
+    .gallery-grid{display:grid;grid-template-columns:repeat(12,1fr);gap:clamp(12px,1.7vw,24px)}
+    .gallery-item{position:relative;grid-column:span 4;overflow:hidden;min-height:440px;background:var(--sand);cursor:pointer}
+    .gallery-item:nth-child(5n+1),.gallery-item:nth-child(5n+4){grid-column:span 5}
+    .gallery-item:nth-child(5n+2),.gallery-item:nth-child(5n+3){grid-column:span 7}
+    .gallery-item img{width:100%;height:100%;object-fit:cover;display:block;filter:saturate(.78);transition:transform .7s cubic-bezier(.2,.75,.25,1),filter .4s ease}
+    .gallery-item:hover img{transform:scale(1.035);filter:saturate(.9)}
+    .gallery-item:after{content:'View';position:absolute;inset:auto 18px 16px auto;padding:7px 12px;background:rgba(253,249,245,.88);color:var(--espresso);font-size:9px;letter-spacing:.14em;text-transform:uppercase;opacity:0;transform:translateY(5px);transition:.3s}
+    .gallery-item:hover:after{opacity:1;transform:none}
+    .gallery-empty{grid-column:1/-1;padding:90px 20px;text-align:center;color:var(--muted);font:400 28px var(--serif)}
+    .success-banner{max-width:700px;margin:0 auto 30px;padding:14px;background:#eef5ec;color:#315c34;border:1px solid #c9dec6;text-align:center}
+    .gallery-modal{position:fixed;inset:0;z-index:200;display:none;align-items:center;justify-content:center;padding:30px;background:rgba(32,23,18,.93);cursor:zoom-out}
+    .gallery-modal.active{display:flex}
+    .gallery-modal img{max-width:min(1100px,94vw);max-height:90vh;object-fit:contain}
+    .modal-close{position:absolute;top:22px;right:25px;border:0;background:transparent;color:#fff;font:300 35px var(--serif);cursor:pointer}
+    @media(max-width:900px){.gallery-item,.gallery-item:nth-child(n){grid-column:span 6;min-height:390px}}
+    @media(max-width:600px){.gallery-hero{padding-top:180px}.gallery-hero h1{font-size:78px}.gallery-toolbar{align-items:flex-start;flex-direction:column}.gallery-item,.gallery-item:nth-child(n){grid-column:1/-1;min-height:430px}.gallery-filters{width:100%}.gallery-filters button{flex:1}.gallery-item:after{opacity:1;transform:none}}
   </style>
 </head>
-
-<body>
-
-<header>
-  <a href="index.html" class="logo-link">
-    <img src="images/Logo.png" alt="Sahar Beauty Logo" class="logo-img">
-  </a>
-</header>
-
-<div class="container">
-
-  <main>
-    
-    <div id="successMessage" class="success-banner" style="display: none;"></div>
-    
-    <h2 style="text-align:center; color:var(--blue-dark); margin-bottom:20px;">
-      גלריית עבודות
-    </h2>
-
-    <div class="gallery-grid" id="galleryGrid">
+<body class="gallery-page">
+  <header class="site-header">
+    <a href="index.html#home" class="wordmark" aria-label="Sahar Beauty home">Sahar Beauty</a>
+    <button class="menu-toggle" type="button" aria-label="Open navigation" aria-expanded="false">☰</button>
+    <nav class="main-nav" aria-label="Primary navigation">
+      <a href="index.html#about" data-gallery-i18n="navAbout">אודות</a>
+      <a href="index.html#services" data-gallery-i18n="navServices">שירותים</a>
+      <a href="#portfolio" data-gallery-i18n="navPortfolio">גלריה</a>
+      <a href="index.html#testimonials" data-gallery-i18n="navReviews">המלצות</a>
+      <a href="index.html#contact" data-gallery-i18n="navContact">יצירת קשר</a>
+    </nav>
+    <div class="header-actions">
+      <div class="language-switcher" aria-label="Language selector">
+        <button type="button" data-lang="ar">AR</button>
+        <button type="button" data-lang="he" class="active">HE</button>
+        <button type="button" data-lang="en">EN</button>
       </div>
+      <a href="index.html#booking" class="header-book" data-gallery-i18n="bookNow">קבעי תור</a>
+    </div>
+  </header>
 
+  <main id="portfolio">
+    <section class="gallery-hero">
+      <p class="eyebrow">Sahar Beauty</p>
+      <h1>Portfolio</h1>
+      <p>A collection of timeless beauty and unforgettable bridal moments.</p>
+    </section>
+
+    <section class="gallery-shell">
+      <div id="successMessage" class="success-banner" hidden></div>
+      <div class="gallery-toolbar">
+        <p data-gallery-i18n="curatedWork">Selected &amp; curated work</p>
+        <div class="gallery-filters" aria-label="Portfolio categories">
+          <button type="button" class="active" data-gallery-i18n="all">הכול</button>
+          <button type="button" data-gallery-i18n="brides">כלות</button>
+          <button type="button" data-gallery-i18n="events">אירועים</button>
+        </div>
+      </div>
+      <div class="gallery-grid" id="galleryGrid" aria-live="polite"></div>
+    </section>
   </main>
 
-</div>
+  <footer class="site-footer">
+    <a href="index.html" class="wordmark">Sahar Beauty</a>
+    <p>Bridal &amp; Event Makeup Artist</p>
+    <div><a href="index.html#booking" data-gallery-i18n="bookNow">קבעי תור</a><span>© 2026 Sahar Beauty</span></div>
+  </footer>
 
-<footer>
-  © 2026 Sahar Beauty
-</footer>
+  <div class="gallery-modal" id="imageModal" onclick="closeModal()" role="dialog" aria-modal="true" aria-label="Portfolio image">
+    <button class="modal-close" type="button" aria-label="Close">×</button>
+    <img id="modalImage" alt="Sahar Beauty portfolio">
+  </div>
+  <a class="whatsapp-float" href="https://wa.me/972503172506" target="_blank" rel="noopener" aria-label="Chat on WhatsApp">WA</a>
 
-<div class="modal" id="imageModal" onclick="closeModal()">
-  <img id="modalImage">
-</div>
+  <script>
+    const API_URL = 'http://localhost:5001/api';
+    const grid = document.getElementById('galleryGrid');
+    const modal = document.getElementById('imageModal');
+    const modalImage = document.getElementById('modalImage');
+    const galleryTranslations = {
+      he:{navAbout:'אודות',navServices:'שירותים',navPortfolio:'גלריה',navReviews:'המלצות',navContact:'יצירת קשר',bookNow:'קבעי תור',curatedWork:'עבודות נבחרות',all:'הכול',brides:'כלות',events:'אירועים'},
+      ar:{navAbout:'من أنا',navServices:'الخدمات',navPortfolio:'الأعمال',navReviews:'آراء العميلات',navContact:'تواصل',bookNow:'احجزي الآن',curatedWork:'أعمال مختارة',all:'الكل',brides:'عرائس',events:'مناسبات'},
+      en:{navAbout:'About',navServices:'Services',navPortfolio:'Portfolio',navReviews:'Reviews',navContact:'Contact',bookNow:'Book Now',curatedWork:'Selected & curated work',all:'All',brides:'Brides',events:'Events'}
+    };
 
-<script>
-const API_URL = "http://localhost:5001/api";
-const grid = document.getElementById("galleryGrid");
-const modal = document.getElementById("imageModal");
-const modalImage = document.getElementById("modalImage");
-
-async function loadGallery() {
-  try {
-    const res = await fetch(`${API_URL}/gallery`);
-    if (!res.ok) throw new Error("Network response was not ok");
-    
-    const images = await res.json();
-    if (!grid) return;
-    
-    grid.innerHTML = "";
-
-    images.forEach(img => {
-      const div = document.createElement("div");
-      div.className = "gallery-item";
-
-      div.innerHTML = `
-        <img src="${img.image}" alt="Sahar Beauty Work" loading="lazy">
-      `;
-
-      div.addEventListener("click", () => {
-        modalImage.src = img.image;
-        modal.classList.add("active");
-      });
-
-      grid.appendChild(div);
-    });
-
-  } catch (err) {
-    console.error("Gallery load error:", err);
-  }
-}
-
-function closeModal() {
-  if (modal) modal.classList.remove("active");
-}
-
-document.addEventListener("DOMContentLoaded", () => {
-  const message = localStorage.getItem("bookingSuccess");
-
-  if (message) {
-    const banner = document.getElementById("successMessage");
-    if (banner) {
-      banner.textContent = message;
-      banner.style.display = "block";
-      
-      localStorage.removeItem("bookingSuccess");
-
-      setTimeout(() => {
-        banner.style.display = "none";
-      }, 4000);
+    function setGalleryLanguage(language){
+      const lang=galleryTranslations[language]?language:'he';
+      document.documentElement.lang=lang;
+      document.documentElement.dir=lang==='en'?'ltr':'rtl';
+      localStorage.setItem('saharLanguage',lang);
+      document.querySelectorAll('[data-gallery-i18n]').forEach(el=>{const value=galleryTranslations[lang][el.dataset.galleryI18n];if(value)el.textContent=value});
+      document.querySelectorAll('[data-lang]').forEach(button=>button.classList.toggle('active',button.dataset.lang===lang));
     }
-  }
 
-  loadGallery();
-});
-</script>
+    async function loadGallery(){
+      try{
+        const response=await fetch(`${API_URL}/gallery`);
+        if(!response.ok)throw new Error('Network response was not ok');
+        const images=await response.json();
+        grid.innerHTML='';
+        if(!images.length){grid.innerHTML='<p class="gallery-empty">Portfolio coming soon.</p>';return}
+        images.forEach((item,index)=>{
+          const card=document.createElement('article');
+          card.className='gallery-item';
+          card.innerHTML=`<img src="${item.image}" alt="Sahar Beauty portfolio ${index+1}" loading="lazy">`;
+          card.addEventListener('click',()=>{modalImage.src=item.image;modal.classList.add('active');document.body.style.overflow='hidden'});
+          grid.appendChild(card);
+        });
+      }catch(error){console.error('Gallery load error:',error);grid.innerHTML='<p class="gallery-empty">Portfolio coming soon.</p>'}
+    }
 
+    function closeModal(){modal.classList.remove('active');document.body.style.overflow=''}
+
+    document.addEventListener('DOMContentLoaded',()=>{
+      setGalleryLanguage(localStorage.getItem('saharLanguage')||'he');
+      document.querySelectorAll('[data-lang]').forEach(button=>button.addEventListener('click',()=>setGalleryLanguage(button.dataset.lang)));
+      const menuButton=document.querySelector('.menu-toggle');
+      const navigation=document.querySelector('.main-nav');
+      menuButton.addEventListener('click',()=>{const open=navigation.classList.toggle('open');menuButton.setAttribute('aria-expanded',String(open))});
+      document.querySelectorAll('.gallery-filters button').forEach(button=>button.addEventListener('click',()=>{document.querySelectorAll('.gallery-filters button').forEach(item=>item.classList.remove('active'));button.classList.add('active')}));
+      document.addEventListener('keydown',event=>{if(event.key==='Escape')closeModal()});
+      const message=localStorage.getItem('bookingSuccess');
+      if(message){const banner=document.getElementById('successMessage');banner.textContent=message;banner.hidden=false;localStorage.removeItem('bookingSuccess');setTimeout(()=>banner.hidden=true,4000)}
+      loadGallery();
+    });
+  </script>
 </body>
 </html>
