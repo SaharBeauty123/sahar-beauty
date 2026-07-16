@@ -28,6 +28,20 @@ function getDayKey(dateString) {
   return dayMap[calendarDate.getUTCDay()];
 }
 
+function addMinutesToTime(time, minutesToAdd) {
+  const [hours, minutes] = String(time).split(':').map(Number);
+  const totalMinutes = hours * 60 + minutes + Number(minutesToAdd || 0);
+  const endHours = Math.floor(totalMinutes / 60) % 24;
+  const endMinutes = totalMinutes % 60;
+  return `${String(endHours).padStart(2, '0')}:${String(endMinutes).padStart(2, '0')}`;
+}
+
+function getMinutesBetween(startTime, endTime) {
+  const [startHours, startMinutes] = String(startTime).split(':').map(Number);
+  const [endHours, endMinutes] = String(endTime).split(':').map(Number);
+  return (endHours * 60 + endMinutes) - (startHours * 60 + startMinutes);
+}
+
 function isAuthenticatedAdmin(req) {
   try {
     const authorization = String(req.headers.authorization || '');
@@ -50,9 +64,10 @@ async function sendAndTrack(phone, message) {
 
 exports.createAppointment = async (req, res) => {
   try {
-    const { customerName, customerPhone, service, date, time } = req.body;
+    const { customerName, customerPhone, service, date, time, endTime } = req.body;
+    const createdByAdmin = isAuthenticatedAdmin(req);
 
-    if (!customerName || !customerPhone || !service || !date || !time) {
+    if (!customerName || !customerPhone || !service || !date || !endTime || (createdByAdmin && !time)) {
       return res.status(400).json({
         success: false,
         error: 'כל השדות הם חובה'
@@ -74,7 +89,26 @@ exports.createAppointment = async (req, res) => {
       });
     }
 
-    const appointmentDateTime = jerusalemDateTimeToUtc(date, time);
+    const serviceDuration = Number(serviceDoc.duration) || 30;
+    const startTime = createdByAdmin
+      ? String(time)
+      : addMinutesToTime(endTime, -serviceDuration);
+    const duration = createdByAdmin
+      ? getMinutesBetween(startTime, endTime)
+      : serviceDuration;
+
+    if (
+      !/^([0-1]?\d|2[0-3]):[0-5]\d$/.test(startTime) ||
+      !/^([0-1]?\d|2[0-3]):[0-5]\d$/.test(String(endTime)) ||
+      !Number.isFinite(duration) || duration < 5 || duration > 480
+    ) {
+      return res.status(400).json({
+        success: false,
+        error: 'שעת הגעה או שעת סיום לא תקינה'
+      });
+    }
+
+    const appointmentDateTime = jerusalemDateTimeToUtc(date, startTime);
 
     if (Number.isNaN(appointmentDateTime.getTime())) {
       return res.status(400).json({
@@ -90,11 +124,15 @@ exports.createAppointment = async (req, res) => {
       });
     }
 
-    const duration = Number(serviceDoc.duration) || 30;
-    const requestedEnd = new Date(appointmentDateTime.getTime() + duration * 60000);
+    const requestedEnd = jerusalemDateTimeToUtc(date, endTime);
 
     const settings = await BusinessSettings.findOne();
     const daySettings = settings?.workingHours?.[getDayKey(date)];
+    const depositPercentage = Number(settings?.depositPercentage ?? 20);
+    const depositAmount = Math.max(
+      0,
+      Math.round((Number(serviceDoc.price) || 0) * depositPercentage / 100)
+    );
 
     if (!daySettings || !daySettings.enabled) {
       return res.status(400).json({
@@ -151,7 +189,6 @@ exports.createAppointment = async (req, res) => {
       });
     }
 
-    const createdByAdmin = isAuthenticatedAdmin(req);
     const initialStatus = createdByAdmin ? 'confirmed' : 'pending';
     const now = new Date();
 
@@ -161,7 +198,8 @@ exports.createAppointment = async (req, res) => {
       service,
       duration,
       date: appointmentDateTime,
-      time,
+      time: startTime,
+      depositAmount,
       status: initialStatus,
       approvalRequestedAt: createdByAdmin ? null : now,
       approvalDecisionAt: createdByAdmin ? now : null,
@@ -171,17 +209,19 @@ exports.createAppointment = async (req, res) => {
       upcomingEmailSent: false
     });
 
+    const appointmentEndTime = String(endTime);
+
     res.status(201).json({
       success: true,
       message: createdByAdmin
         ? 'התור נקבע ואושר בהצלחה!'
-        : 'בקשת התור נשלחה וממתינה לאישור בעל העסק',
+        : 'בקשת התור נשלחה וממתינה לאישור Sahar Beauty',
       data: appointment
     });
 
     if (createdByAdmin) {
       const confirmationMessage = withWhatsAppFooter(
-        `שלום ${appointment.customerName} 👋\n\nהתור שלך נקבע ואושר בהצלחה ✅\n📅 ${formatJerusalemDate(appointmentDateTime)}\n🕐 ${appointment.time}\n✂️/💆‍♂️ ${appointment.service}\n⏳ ${appointment.duration} דקות\n\nמחכים לך 💈`
+        `שלום ${appointment.customerName} 🌸\n\nהתור שלך נקבע ואושר בהצלחה ✅\n📅 ${formatJerusalemDate(appointmentDateTime)}\n🕐 שעת הגעה: ${appointment.time}\n🏁 שעת סיום: ${appointmentEndTime}\n✨ ${appointment.service}\n⏳ ${appointment.duration} דקות\n\nמחכים לך 🌸`
       );
 
       sendAndTrack(appointment.customerPhone, confirmationMessage)
@@ -199,11 +239,11 @@ exports.createAppointment = async (req, res) => {
     const requestCode = String(appointment._id).slice(-6).toUpperCase();
 
     const waitingMessage = withWhatsAppFooter(
-      `שלום ${appointment.customerName} 👋\n\nבקשת התור שלך התקבלה וממתינה לאישור בעל העסק ⏳\n\n📅 ${formatJerusalemDate(appointmentDateTime)}\n🕐 ${appointment.time}\n✂️/💆‍♂️ ${appointment.service}\n⏳ ${appointment.duration} דקות\n\nנשלח אליך עדכון מיד לאחר שבעל העסק יאשר או ידחה את הבקשה.`
+      `שלום ${appointment.customerName} 👋\n\nבקשת התור שלך התקבלה וממתינה לאישור Sahar Beauty ⏳\n\n📅 ${formatJerusalemDate(appointmentDateTime)}\n🕐 שעת סיום: ${appointmentEndTime}\n✨ ${appointment.service}\n⏳ ${appointment.duration} דקות\n💳 ערבון: ₪${appointment.depositAmount} (${depositPercentage}%)\n\nנשלח אליך עדכון מיד לאחר ש-Sahar Beauty תאשר או תדחה את הבקשה.`
     );
 
     const ownerApprovalMessage = withWhatsAppFooter(
-      `📅 בקשת תור חדשה ממתינה לאישור\n\n🔢 מספר בקשה: ${requestCode}\n👤 שם: ${appointment.customerName}\n📞 טלפון: ${appointment.customerPhone}\n✂️/💆‍♂️ שירות: ${appointment.service}\n⏳ משך: ${appointment.duration} דקות\n📅 תאריך: ${formatJerusalemDate(appointmentDateTime)}\n🕐 שעה: ${appointment.time}\n\nהשב 1 כדי לאשר את התור ✅\nהשב 2 כדי לדחות את התור ❌\n\nהתגובה תחול על בקשת התור הממתינה הוותיקה ביותר.`
+      `📅 בקשת תור חדשה ממתינה לאישור\n\n🔢 מספר בקשה: ${requestCode}\n👤 שם: ${appointment.customerName}\n📞 טלפון: ${appointment.customerPhone}\n✨ שירות: ${appointment.service}\n⏳ משך: ${appointment.duration} דקות\n📅 תאריך: ${formatJerusalemDate(appointmentDateTime)}\n🕐 התחלה: ${appointment.time}\n🏁 סיום: ${appointmentEndTime}\n\nהשב 1 כדי לאשר את התור ✅\nהשב 2 כדי לדחות את התור ❌\n\nהתגובה תחול על בקשת התור הממתינה הוותיקה ביותר.`
     );
 
     Promise.all([
@@ -229,5 +269,54 @@ exports.createAppointment = async (req, res) => {
         error: 'שגיאת שרת פנימית'
       });
     }
+  }
+};
+
+exports.confirmDemoDeposit = async (req, res) => {
+  try {
+    const method = String(req.body.method || '');
+
+    if (method !== 'bit') {
+      return res.status(400).json({
+        success: false,
+        error: 'אמצעי התשלום אינו נתמך'
+      });
+    }
+
+    const appointment = await Appointment.findByIdAndUpdate(
+      req.params.id,
+      {
+        $set: {
+          status: 'confirmed',
+          approvalDecision: 'approved',
+          approvalDecisionAt: new Date(),
+          depositStatus: 'paid',
+          depositMethod: method,
+          depositPaidAt: new Date()
+        }
+      },
+      { new: true, runValidators: true }
+    );
+
+    if (!appointment) {
+      return res.status(404).json({ success: false, error: 'התור לא נמצא' });
+    }
+
+    res.json({
+      success: true,
+      message: 'הערבון נקלט והתור אושר',
+      data: appointment
+    });
+
+    const confirmationMessage = withWhatsAppFooter(
+      `שלום ${appointment.customerName} 🌸\n\nהערבון בסך ₪${appointment.depositAmount} סומן כשולם באמצעות Bit.\nהתור שלך אושר בהצלחה ✅\n\n📅 ${formatJerusalemDate(new Date(appointment.date))}\n🕐 שעת הגעה: ${appointment.time}\n🏁 שעת סיום: ${addMinutesToTime(appointment.time, appointment.duration)}\n✨ ${appointment.service}`
+    );
+
+    sendAndTrack(appointment.customerPhone, confirmationMessage).catch((error) => {
+      console.error('❌ Deposit confirmation WhatsApp failed:', error.message);
+    });
+  } catch (error) {
+    console.error('שגיאה באישור הערבון:', error);
+    res.status(500).json({ success: false, error: 'שגיאה באישור הערבון' });
   }
 };

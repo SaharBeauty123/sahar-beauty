@@ -1,0 +1,116 @@
+<!DOCTYPE html>
+<html lang="he" dir="rtl">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="description" content="Sahar Beauty - תשלום ערבון לתור">
+  <title>Sahar Beauty - תשלום ערבון</title>
+  <link rel="stylesheet" href="style.css">
+  <style>
+    .deposit-card { text-align: center; }
+    .deposit-card h1 { margin-bottom: 8px; color: var(--blue-dark); font-size: 28px; }
+    .deposit-intro { margin-bottom: 22px; color: var(--muted); }
+    .deposit-summary { margin-bottom: 24px; padding: 18px; border: 1px solid var(--border); border-radius: 16px; background: var(--blue-light); }
+    .deposit-amount { color: var(--blue-dark); font-size: 32px; font-weight: 800; }
+    .payment-options { display: grid; gap: 14px; }
+    .payment-option { padding: 18px; border: 1px solid var(--border); border-radius: 16px; background: #fff; text-align: right; }
+    .payment-option h2 { margin-bottom: 5px; color: var(--blue-dark); font-size: 19px; }
+    .payment-option p { margin-bottom: 13px; color: var(--muted); font-size: 14px; }
+    .cash-button { background: linear-gradient(135deg, #7d5267, #ad748f); }
+    .demo-note { margin-top: 18px; color: #9a6b7f; font-size: 12px; }
+    #paymentMessage { display: none; margin-top: 18px; padding: 14px; border-radius: 12px; }
+    #paymentMessage.success { display: block; border: 1px solid #8dc89d; background: #effbf2; color: #217a38; }
+    #paymentMessage.error { display: block; border: 1px solid #ecaaaa; background: #fff1f1; color: #a52a2a; }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <header>
+      <a href="index.html" class="logo-link">
+        <img src="images/Logo.png" alt="Sahar Beauty Logo" class="logo-img">
+      </a>
+    </header>
+    <main class="deposit-card">
+      <h1>נשאר רק לשלם ערבון 🌸</h1>
+      <p class="deposit-intro">לשמירת התור יש לבחור אמצעי תשלום.</p>
+
+      <section class="deposit-summary">
+        <div id="appointmentSummary">טוען את פרטי התור...</div>
+        <div class="deposit-amount">₪<span id="depositAmount">0</span></div>
+        <small>סכום הערבון</small>
+      </section>
+
+      <div class="payment-options">
+        <section class="payment-option">
+          <h2>🟢 תשלום באמצעות Bit</h2>
+          <p>לאחר התשלום התור יאושר אוטומטית.</p>
+          <button type="button" onclick="payDeposit('bit')">לתשלום בביט</button>
+        </section>
+
+        <section class="payment-option">
+          <h2>💵 תשלום במזומן</h2>
+          <p>לתיאום תשלום מזומן ייפתח WhatsApp מול Sahar Beauty. התור יישאר ממתין לאישור.</p>
+          <button type="button" class="cash-button" onclick="openCashWhatsApp()">לשיחת WhatsApp</button>
+        </section>
+      </div>
+
+      <div id="paymentMessage"></div>
+      <p class="demo-note">קישורי התשלום בעמוד זה הם זמניים לצורך הדגמה.</p>
+    </main>
+  </div>
+
+  <script>
+    const API_URL = 'http://localhost:5001/api';
+    const OWNER_WHATSAPP = '972503172506';
+    const DEMO_PAYMENT_LINK = 'https://example.com/bit-payment-demo';
+
+    const params = new URLSearchParams(window.location.search);
+    const appointmentId = params.get('id');
+    const savedAppointment = JSON.parse(localStorage.getItem('pendingDepositAppointment') || 'null');
+
+    if (!appointmentId || !savedAppointment || savedAppointment.id !== appointmentId) {
+      showPaymentMessage('לא נמצאו פרטי התור. יש לחזור ולקבוע תור מחדש.', 'error');
+    } else {
+      document.getElementById('appointmentSummary').textContent =
+        `${savedAppointment.customerName} • ${savedAppointment.service} • ${savedAppointment.date} • סיום ב-${savedAppointment.endTime}`;
+      document.getElementById('depositAmount').textContent = savedAppointment.amount ?? 0;
+    }
+
+    async function payDeposit(method) {
+      if (!appointmentId) return;
+      const buttons = document.querySelectorAll('button');
+      buttons.forEach((button) => { button.disabled = true; });
+
+      try {
+        window.open(DEMO_PAYMENT_LINK, '_blank', 'noopener');
+        const response = await fetch(`${API_URL}/appointments/${appointmentId}/deposit/confirm`, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ method })
+        });
+        const result = await response.json();
+        if (!response.ok) throw new Error(result.error || 'התשלום לא אושר');
+
+        localStorage.removeItem('pendingDepositAppointment');
+        showPaymentMessage('✅ הערבון נקלט והתור שלך אושר בהצלחה!', 'success');
+        setTimeout(() => { window.location.href = './gallery.html'; }, 1800);
+      } catch (error) {
+        buttons.forEach((button) => { button.disabled = false; });
+        showPaymentMessage(error.message || 'שגיאה באישור התשלום', 'error');
+      }
+    }
+
+    function openCashWhatsApp() {
+      if (!savedAppointment) return;
+      const message = `שלום, קבעתי תור ל-${savedAppointment.service} בתאריך ${savedAppointment.date}, עם שעת סיום ${savedAppointment.endTime}. אני רוצה לתאם תשלום ערבון במזומן. מספר תור: ${savedAppointment.id}`;
+      window.location.href = `https://wa.me/${OWNER_WHATSAPP}?text=${encodeURIComponent(message)}`;
+    }
+
+    function showPaymentMessage(text, type) {
+      const box = document.getElementById('paymentMessage');
+      box.textContent = text;
+      box.className = type;
+    }
+  </script>
+</body>
+</html>

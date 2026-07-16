@@ -5,6 +5,12 @@ const { formatJerusalemDate } = require('../utils/timeZone');
 
 const OWNER_WHATSAPP_PHONE = process.env.OWNER_WHATSAPP_PHONE || '0503172506';
 
+function addMinutesToTime(time, minutesToAdd) {
+  const [hours, minutes] = String(time).split(':').map(Number);
+  const totalMinutes = hours * 60 + minutes + Number(minutesToAdd || 0);
+  return `${String(Math.floor(totalMinutes / 60) % 24).padStart(2, '0')}:${String(totalMinutes % 60).padStart(2, '0')}`;
+}
+
 function getPayload(reqBody) {
   return reqBody?.payload || reqBody?.data || reqBody || {};
 }
@@ -69,10 +75,10 @@ function isOwner(sender) {
 async function notifyClient(appointment, approved) {
   const message = approved
     ? withWhatsAppFooter(
-      `שלום ${appointment.customerName} 👋\n\nהתור שלך אושר בהצלחה על ידי בעל העסק ✅\n\n📅 ${formatJerusalemDate(new Date(appointment.date))}\n🕐 ${appointment.time}\n✂️/💆‍♂️ ${appointment.service}\n⏳ ${appointment.duration} דקות\n\nמחכים לך 💈`
+      `שלום ${appointment.customerName} 🌸\n\nהתור שלך אושר בהצלחה על ידי Sahar Beauty ✅\n\n📅 ${formatJerusalemDate(new Date(appointment.date))}\n🕐 שעת הגעה: ${appointment.time}\n🏁 שעת סיום: ${addMinutesToTime(appointment.time, appointment.duration)}\n✨ ${appointment.service}\n⏳ ${appointment.duration} דקות\n\nמחכים לך 🌸`
     )
     : withWhatsAppFooter(
-      `שלום ${appointment.customerName} 👋\n\nלצערנו, בקשת התור שלך נדחתה על ידי בעל העסק ❌\n\n📅 ${formatJerusalemDate(new Date(appointment.date))}\n🕐 ${appointment.time}\n✂️/💆‍♂️ ${appointment.service}\n\nניתן לבחור מועד אחר באתר.`
+      `שלום ${appointment.customerName} 👋\n\nלצערנו, בקשת התור שלך נדחתה על ידי Sahar Beauty ❌\n\n📅 ${formatJerusalemDate(new Date(appointment.date))}\n🕐 שעת הגעה: ${appointment.time}\n🏁 שעת סיום: ${addMinutesToTime(appointment.time, appointment.duration)}\n✨ ${appointment.service}\n\nניתן לבחור מועד אחר באתר.`
     );
 
   return whatsappService.sendMessage(appointment.customerPhone, message);

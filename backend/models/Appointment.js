@@ -42,6 +42,28 @@ const appointmentSchema = new mongoose.Schema({
     default: 'pending'
   },
 
+  depositStatus: {
+    type: String,
+    enum: ['unpaid', 'paid', 'cash-coordination'],
+    default: 'unpaid'
+  },
+
+  depositMethod: {
+    type: String,
+    enum: ['bit', 'cash', null],
+    default: null
+  },
+
+  depositAmount: {
+    type: Number,
+    default: 0
+  },
+
+  depositPaidAt: {
+    type: Date,
+    default: null
+  },
+
   approvalRequestedAt: {
     type: Date,
     default: null

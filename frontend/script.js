@@ -1,5 +1,5 @@
 // ✅ تم التحديث ليرتبط بسيرفر Railway الجديد 24/7
-const API_URL = "https://railway-deploy-production-adc6.up.railway.app/api";
+const API_URL = "http://localhost:5001/api";
 
 /* ===============================
    DOM ELEMENTS
@@ -96,6 +96,14 @@ function showServicePrice() {
   }
 }
 
+function addMinutesToTime(time, minutesToAdd) {
+  const [hours, minutes] = String(time).split(":").map(Number);
+  const totalMinutes = hours * 60 + minutes + Number(minutesToAdd || 0);
+  const endHours = Math.floor(totalMinutes / 60) % 24;
+  const endMinutes = totalMinutes % 60;
+  return `${String(endHours).padStart(2, "0")}:${String(endMinutes).padStart(2, "0")}`;
+}
+
 /* ===============================
    LOAD AVAILABLE TIMES
 =================================*/
@@ -123,12 +131,19 @@ async function loadAvailableTimes() {
       timeSelect.innerHTML = "<option>אין שעות פנויות</option>";
       timeSelect.disabled = true;
     } else {
-      timeSelect.innerHTML = '<option value="">בחר שעה...</option>';
+      timeSelect.innerHTML = '<option value="">בחרי שעת סיום...</option>';
+
+      const selectedService = serviceSelect.options[serviceSelect.selectedIndex];
+      const serviceDuration = Number(selectedService?.dataset.duration) || 30;
 
       data.availableSlots.forEach(slot => {
+        const endTime = addMinutesToTime(slot, serviceDuration);
         const option = document.createElement("option");
+        // The backend keeps the calculated start time for conflict checks,
+        // while the customer sees and chooses the desired end time.
         option.value = slot;
-        option.textContent = slot;
+        option.dataset.endTime = endTime;
+        option.textContent = endTime;
         timeSelect.appendChild(option);
       });
 
@@ -163,10 +178,11 @@ async function submitBooking(e) {
     customerPhone: phoneEl.value.trim(),
     service: serviceSelect.value,
     date: dateInput.value,
-    time: timeSelect.value
+    time: timeSelect.value,
+    endTime: timeSelect.options[timeSelect.selectedIndex]?.dataset.endTime || ""
   };
 
-  if (!data.customerName || !data.customerPhone || !data.service || !data.date || !data.time) {
+  if (!data.customerName || !data.customerPhone || !data.service || !data.date || !data.time || !data.endTime) {
     showMessage("יש למלא את כל השדות", "error");
     return;
   }
@@ -197,16 +213,27 @@ async function submitBooking(e) {
     });
 
     if (res.ok) {
-      localStorage.setItem("bookingSuccess", "✅ התור שלך נקבע בהצלחה! נתראה בקרוב 💈");
+      const result = await res.json();
+      const appointment = result.data;
+
+      if (!appointment?._id) {
+        throw new Error("Appointment ID is missing from the server response");
+      }
+
+      localStorage.setItem("pendingDepositAppointment", JSON.stringify({
+        id: appointment._id,
+        customerName: appointment.customerName,
+        service: appointment.service,
+        date: data.date,
+        endTime: data.endTime,
+        amount: appointment.depositAmount ?? 0
+      }));
       
       if (bookingForm) bookingForm.reset();
       if (priceDisplay) priceDisplay.textContent = "";
       if (timeSelect) timeSelect.disabled = true;
 
-      console.log("Booking successful! Redirecting to Gallery...");
-
-      // 🔹 الحل القاطع والسريع: التوجيه المباشر باسم الملف بدون حسابات معقدة للمسار
-      window.location.href = "./gallery.html";      
+      window.location.href = `./deposit.html?id=${encodeURIComponent(appointment._id)}`;
     } else {
       // إعادة الزر لوضعه الطبيعي في حال وجود خطأ في البيانات
       if (submitBtn) {

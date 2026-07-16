@@ -1,18 +1,18 @@
 /* =========================================
-   FADILA BARBER – CLEAN WHITE & BLUE
+   SAHAR BEAUTY – SOFT ROSE & BLUSH
 ========================================= */
 
 :root {
-  --blue: #1667d9;
-  --blue-dark: #0f4ea8;
-  --blue-light: #eaf3ff;
-  --text: #172033;
-  --muted: #667085;
+  --blue: #d94f8a;
+  --blue-dark: #a92f64;
+  --blue-light: #fff0f6;
+  --text: #432737;
+  --muted: #856777;
   --white: #ffffff;
-  --border: #d8e1ee;
-  --radius: 16px;
-  --blue-shadow: 0 18px 50px rgba(22, 103, 217, 0.24),
-                 0 0 0 1px rgba(22, 103, 217, 0.10);
+  --border: #f0cfde;
+  --radius: 22px;
+  --blue-shadow: 0 22px 55px rgba(169, 47, 100, 0.16),
+                 0 0 0 1px rgba(217, 79, 138, 0.08);
 }
 
 * {
@@ -22,41 +22,31 @@
 }
 
 html {
-  background: #ffffff;
+  background: #fff8fb;
 }
 
 body {
   position: relative;
   min-height: 100vh;
-  padding-right: 22px;
+  padding-right: 0;
   overflow-x: hidden;
   font-family: 'Segoe UI', Arial, sans-serif;
-  background: #ffffff;
+  background:
+    radial-gradient(circle at 8% 10%, rgba(246, 184, 211, 0.32), transparent 28%),
+    radial-gradient(circle at 92% 86%, rgba(217, 79, 138, 0.12), transparent 30%),
+    linear-gradient(150deg, #fffafd 0%, #fff3f8 100%);
   color: var(--text);
   line-height: 1.6;
 }
 
 body::after {
-  content: '';
+  content: '✿';
   position: fixed;
-  z-index: 1000;
-  top: 0;
-  right: 0;
-  bottom: 0;
-  width: 22px;
-  border-left: 1px solid rgba(15, 78, 168, 0.18);
-  box-shadow: -3px 0 12px rgba(22, 103, 217, 0.10);
-  background: repeating-linear-gradient(
-    135deg,
-    #df2638 0,
-    #df2638 15px,
-    #ffffff 15px,
-    #ffffff 30px,
-    #1769d2 30px,
-    #1769d2 45px,
-    #ffffff 45px,
-    #ffffff 60px
-  );
+  left: 5vw;
+  bottom: 4vh;
+  color: rgba(217, 79, 138, 0.1);
+  font-size: 120px;
+  line-height: 1;
   pointer-events: none;
 }
 
@@ -103,7 +93,7 @@ main {
   position: relative;
   overflow: hidden;
   padding: 36px;
-  border: 1px solid rgba(22, 103, 217, 0.14);
+  border: 1px solid rgba(217, 79, 138, 0.16);
   border-radius: var(--radius);
   background: var(--white);
   box-shadow: var(--blue-shadow);
@@ -116,7 +106,7 @@ main::before {
   right: 0;
   left: 0;
   height: 5px;
-  background: linear-gradient(90deg, #0f4ea8, #2d8cff, #0f4ea8);
+  background: linear-gradient(90deg, #a92f64, #ef83b2, #a92f64);
 }
 
 form h2 {
@@ -133,7 +123,7 @@ form h2 {
 .form-group label {
   display: block;
   margin-bottom: 7px;
-  color: #26354d;
+  color: #593346;
   font-size: 14px;
   font-weight: 650;
 }
@@ -163,7 +153,7 @@ input:focus,
 select:focus {
   outline: none;
   border-color: var(--blue);
-  box-shadow: 0 0 0 4px rgba(22, 103, 217, 0.13);
+  box-shadow: 0 0 0 4px rgba(217, 79, 138, 0.13);
 }
 
 select option {
@@ -190,18 +180,18 @@ button {
   padding: 14px;
   border: none;
   border-radius: 12px;
-  background: linear-gradient(135deg, var(--blue-dark), #2584ef);
+  background: linear-gradient(135deg, var(--blue-dark), #e968a0);
   color: #ffffff;
   font-size: 16px;
   font-weight: 750;
   cursor: pointer;
-  box-shadow: 0 8px 18px rgba(22, 103, 217, 0.22);
+  box-shadow: 0 10px 22px rgba(169, 47, 100, 0.22);
   transition: transform 0.2s ease, box-shadow 0.2s ease;
 }
 
 button:hover {
   transform: translateY(-2px);
-  box-shadow: 0 12px 26px rgba(22, 103, 217, 0.32);
+  box-shadow: 0 14px 30px rgba(169, 47, 100, 0.3);
 }
 
 button:active {
@@ -211,10 +201,10 @@ button:active {
 .admin-btn {
   width: auto;
   padding: 9px 16px;
-  border: 1px solid #c9d8ed;
+  border: 1px solid #edc5d7;
   background: #ffffff;
   color: var(--blue-dark);
-  box-shadow: 0 5px 16px rgba(22, 103, 217, 0.12);
+  box-shadow: 0 5px 16px rgba(169, 47, 100, 0.1);
   font-size: 13px;
 }
 
@@ -290,14 +280,14 @@ button:active {
   display: inline-flex;
   justify-content: center;
   align-items: center;
-  width: 300px;
-  height: 300px;
+  width: 390px;
+  height: 390px;
 }
 
 .logo-img {
   display: block;
-  width: 300px;
-  height: 300px;
+  width: 390px;
+  height: 390px;
   max-width: none;
   object-fit: contain;
   transition: transform 0.3s ease;
@@ -309,20 +299,17 @@ button:active {
 
 footer {
   margin-top: 40px;
-  color: #7b8494;
+  color: #927181;
   text-align: center;
   font-size: 13px;
 }
 
 @media (max-width: 600px) {
   body {
-    padding-right: 14px;
+    padding-right: 0;
   }
 
-  body::after {
-    width: 14px;
-    background-size: auto;
-  }
+  body::after { font-size: 76px; }
 
   body > header {
     padding: 12px 14px 0;
@@ -339,6 +326,12 @@ footer {
 
   header h1 {
     font-size: 26px;
+  }
+
+  .logo-link,
+  .logo-img {
+    width: 290px;
+    height: 290px;
   }
 
   button {

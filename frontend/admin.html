@@ -6,15 +6,15 @@
 <title>Owner Login</title>
 <style>
 :root{
-  --blue:#1769aa;
-  --blue-dark:#0d4f87;
-  --blue-soft:#eaf5ff;
-  --text:#17324d;
-  --muted:#668199;
+  --blue:#d94f8a;
+  --blue-dark:#a92f64;
+  --blue-soft:#fff0f6;
+  --text:#432737;
+  --muted:#856777;
   --danger:#c62828;
   --success:#1b7f3a;
-  --border:#cfe4f5;
-  --shadow:0 18px 50px rgba(23,105,170,.24),0 0 0 5px rgba(23,105,170,.05);
+  --border:#f0cfde;
+  --shadow:0 20px 55px rgba(169,47,100,.16),0 0 0 5px rgba(217,79,138,.04);
 }
 *{box-sizing:border-box}
 html,body{min-height:100%}
@@ -23,21 +23,21 @@ body{
   min-height:100vh;
   font-family:"Segoe UI",Arial,sans-serif;
   color:var(--text);
-  background:#fff;
-  padding:24px 42px 44px 24px;
+  background:radial-gradient(circle at 10% 12%,rgba(246,184,211,.35),transparent 30%),linear-gradient(150deg,#fffafd,#fff1f7);
+  padding:24px;
   position:relative;
   overflow-x:hidden;
 }
 body::after{
-  content:"";
+  content:"✿";
   position:fixed;
-  top:0;
-  right:0;
-  width:18px;
-  height:100vh;
+  left:5vw;
+  bottom:4vh;
+  width:auto;
+  height:auto;
   z-index:20;
-  background:repeating-linear-gradient(-35deg,#d62828 0 20px,#fff 20px 40px,#1769aa 40px 60px,#fff 60px 80px);
-  box-shadow:-3px 0 12px rgba(23,105,170,.24);
+  color:rgba(217,79,138,.1);
+  font-size:120px;
   pointer-events:none;
 }
 .page-shell{
@@ -49,8 +49,8 @@ body::after{
   align-items:center;
 }
 .main-header{
-  width:300px;
-  height:300px;
+  width:390px;
+  height:390px;
   margin:0 auto 8px;
   display:flex;
   justify-content:center;
@@ -58,15 +58,15 @@ body::after{
 }
 .logo-link{
   display:inline-flex;
-  width:300px;
-  height:300px;
+  width:390px;
+  height:390px;
   justify-content:center;
   align-items:center;
 }
 .logo-img{
   display:block;
-  width:300px;
-  height:300px;
+  width:390px;
+  height:390px;
   max-width:none;
   object-fit:contain;
   transition:.25s ease;
@@ -95,7 +95,7 @@ body::after{
   left:0;
   right:0;
   height:5px;
-  background:linear-gradient(90deg,var(--blue-dark),#2d8cff,var(--blue-dark));
+  background:linear-gradient(90deg,var(--blue-dark),#ef83b2,var(--blue-dark));
 }
 h1{
   margin:0 0 6px;
@@ -113,7 +113,7 @@ h1{
 .form-field label{
   display:block;
   margin-bottom:7px;
-  color:#35536d;
+  color:#593346;
   font-size:14px;
   font-weight:700;
 }
@@ -126,14 +126,14 @@ input,button{
 input{
   background:#fff;
   color:var(--text);
-  border:1px solid #bfd8ec;
+  border:1px solid #edc5d7;
   outline:none;
   transition:.2s ease;
 }
 input::placeholder{color:#9aacbb}
 input:focus{
   border-color:var(--blue);
-  box-shadow:0 0 0 4px rgba(23,105,170,.12)
+  box-shadow:0 0 0 4px rgba(217,79,138,.12)
 }
 button{
   margin-top:4px;
@@ -142,12 +142,12 @@ button{
   color:#fff;
   font-weight:700;
   cursor:pointer;
-  box-shadow:0 10px 22px rgba(23,105,170,.23);
+  box-shadow:0 10px 22px rgba(169,47,100,.22);
   transition:.2s ease;
 }
 button:hover{
   transform:translateY(-2px);
-  box-shadow:0 14px 26px rgba(23,105,170,.3)
+  box-shadow:0 14px 26px rgba(169,47,100,.3)
 }
 .back-link{
   display:block;
@@ -172,6 +172,7 @@ button:hover{
 @media(max-width:600px){
   body{padding:16px 28px 30px 10px}
   body::after{width:12px}
+  .main-header,.logo-link,.logo-img{width:290px;height:290px}
   .login-box{padding:32px 20px 26px;border-radius:16px}
 }
 </style>
@@ -180,7 +181,7 @@ button:hover{
 <div class="page-shell">
   <header class="main-header">
     <a href="index.html" class="logo-link" aria-label="חזרה לאתר">
-      <img src="images/logo.png" alt="Fadila Barber Logo" class="logo-img">
+      <img src="images/Logo.png" alt="Sahar Beauty Logo" class="logo-img">
     </a>
   </header>
 
@@ -207,7 +208,7 @@ button:hover{
 </div>
 
 <script>
-const API_URL = "https://railway-deploy-production-adc6.up.railway.app/api";
+const API_URL = "http://localhost:5001/api";
 
 async function login(){
   const username=document.getElementById("username").value.trim();

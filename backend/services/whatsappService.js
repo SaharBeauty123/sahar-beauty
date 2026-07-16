@@ -35,21 +35,21 @@ function createFingerprint(phone, message) {
 }
 
 async function getWahaConfig() {
-  const config = await Settings.findById('waha_live_url');
+  const databaseConfig = await Settings.findById('waha_live_url');
+  const url = String(process.env.WAHA_URL || databaseConfig?.url || '')
+    .trim()
+    .replace(/\/+$/, '')
+    .replace(/\/api$/i, '');
 
-  if (!config || !config.url) {
-    throw new Error('WAHA URL not found in DB');
+  if (!url) {
+    throw new Error('WAHA_URL is missing');
   }
 
   if (!process.env.WAHA_SESSION) {
     throw new Error('WAHA_SESSION is missing');
   }
 
-  if (!process.env.WAHA_API_KEY) {
-    throw new Error('WAHA_API_KEY is missing');
-  }
-
-  return config;
+  return { url };
 }
 
 async function sendDirect(phone, message) {
@@ -65,7 +65,9 @@ async function sendDirect(phone, message) {
     },
     {
       headers: {
-        'x-api-key': process.env.WAHA_API_KEY,
+        ...(process.env.WAHA_API_KEY
+          ? { 'x-api-key': process.env.WAHA_API_KEY }
+          : {}),
         'Content-Type': 'application/json'
       },
       timeout: 15000

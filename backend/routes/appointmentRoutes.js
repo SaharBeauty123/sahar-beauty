@@ -8,7 +8,8 @@ const {
 } = require("../controllers/appointmentController");
 
 const {
-  createAppointment
+  createAppointment,
+  confirmDemoDeposit
 } = require("../controllers/bookingController");
 
 const {
@@ -20,6 +21,7 @@ const {
 } = require("../controllers/appointmentEditController");
 
 router.post("/", createAppointment);
+router.post("/:id/deposit/confirm", confirmDemoDeposit);
 router.get("/available/:date", getAvailableSlots);
 
 router.get("/", getAllAppointments);

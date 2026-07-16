@@ -10,6 +10,29 @@ const {
 } = require('../utils/timeZone');
 
 const ALLOWED_STATUSES = ['pending', 'confirmed', 'cancelled', 'completed', 'no-show'];
+const STATUS_LABELS = {
+  pending: 'ממתין לאישור',
+  confirmed: 'אושר',
+  cancelled: 'בוטל',
+  completed: 'הושלם',
+  'no-show': 'לא הגיעה'
+};
+
+function getStatusLabel(status) {
+  return STATUS_LABELS[status] || status;
+}
+
+function addMinutesToTime(time, minutesToAdd) {
+  const [hours, minutes] = String(time).split(':').map(Number);
+  const totalMinutes = hours * 60 + minutes + Number(minutesToAdd || 0);
+  return `${String(Math.floor(totalMinutes / 60) % 24).padStart(2, '0')}:${String(totalMinutes % 60).padStart(2, '0')}`;
+}
+
+function getMinutesBetween(startTime, endTime) {
+  const [startHours, startMinutes] = String(startTime).split(':').map(Number);
+  const [endHours, endMinutes] = String(endTime).split(':').map(Number);
+  return (endHours * 60 + endMinutes) - (startHours * 60 + startMinutes);
+}
 
 function buildChangeList(previous, next) {
   const changes = [];
@@ -27,15 +50,15 @@ function buildChangeList(previous, next) {
   }
 
   if (previous.time !== next.time) {
-    changes.push(`🕐 שעה: ${next.time}`);
+    changes.push(`🕐 שעת הגעה: ${next.time}`);
   }
 
-  if (Number(previous.duration) !== Number(next.duration)) {
-    changes.push(`⏳ משך: ${next.duration} דקות`);
+  if (previous.endTime !== next.endTime) {
+    changes.push(`🏁 שעת סיום: ${next.endTime}`);
   }
 
   if (previous.status !== next.status) {
-    changes.push(`📌 סטטוס: ${next.status}`);
+    changes.push(`📌 סטטוס: ${getStatusLabel(next.status)}`);
   }
 
   return changes;
@@ -51,17 +74,31 @@ function buildOwnerNoteSection(notes) {
   return `\n\n📝 *הערה*:\n${cleanNote}`;
 }
 
-function buildClientUpdateMessage(appointment, changes) {
+function buildClientUpdateMessage(appointment, changes, previousStatus) {
   const noteSection = buildOwnerNoteSection(appointment.notes);
+
+  if (previousStatus === 'pending' && appointment.status === 'confirmed') {
+    return withWhatsAppFooter(
+      `שלום ${appointment.customerName} 🌸\n\nבקשת התור שלך אושרה בהצלחה ✅\n\n📅 ${formatJerusalemDate(new Date(appointment.date))}\n🕐 שעת הגעה: ${appointment.time}\n🏁 שעת סיום: ${addMinutesToTime(appointment.time, appointment.duration)}\n✨ שירות: ${appointment.service}\n⏳ משך: ${appointment.duration} דקות${noteSection}\n\nמחכים לך 🌸`
+    );
+  }
+
+  if (previousStatus === 'pending' && appointment.status === 'cancelled') {
+    const reason = String(appointment.notes || '').trim();
+    const reasonSection = reason ? `\n\n📝 סיבת הדחייה: ${reason}` : '';
+    return withWhatsAppFooter(
+      `שלום ${appointment.customerName} 👋\n\nלצערנו, בקשת התור שלך נדחתה ❌\n\n📅 ${formatJerusalemDate(new Date(appointment.date))}\n🕐 שעת הגעה: ${appointment.time}\n🏁 שעת סיום: ${addMinutesToTime(appointment.time, appointment.duration)}\n✨ שירות: ${appointment.service}${reasonSection}\n\nניתן לבחור מועד אחר באתר.`
+    );
+  }
 
   if (appointment.status === 'cancelled') {
     return withWhatsAppFooter(
-      `שלום ${appointment.customerName} 👋\n\n*התור שלך בוטל על ידי פדילה ברבר*.\n\n📅 ${formatJerusalemDate(new Date(appointment.date))}\n🕐 ${appointment.time}\n✂️/💆‍♂️ ${appointment.service}${noteSection}\n\nלפרטים נוספים ניתן ליצור קשר עם העסק.`
+      `שלום ${appointment.customerName} 👋\n\n*התור שלך בוטל על ידי Sahar Beauty*.\n\n📅 ${formatJerusalemDate(new Date(appointment.date))}\n🕐 שעת הגעה: ${appointment.time}\n🏁 שעת סיום: ${addMinutesToTime(appointment.time, appointment.duration)}\n✨ ${appointment.service}${noteSection}\n\nלפרטים נוספים ניתן ליצור קשר עם העסק.`
     );
   }
 
   return withWhatsAppFooter(
-    `שלום ${appointment.customerName} 👋\n\n*פדילה ברבר עדכן את התור שלך* ✏️\n\nהשינויים שבוצעו:\n${changes.join('\n')}\n\nפרטי התור המעודכנים:\n📅 ${formatJerusalemDate(new Date(appointment.date))}\n🕐 ${appointment.time}\n✂️/💆‍♂️ ${appointment.service}\n⏳ ${appointment.duration} דקות\n📌 ${appointment.status}${noteSection}\n\nמחכים לך 💈`
+    `שלום ${appointment.customerName} 🌸\n\n*Sahar Beauty עדכנה את התור שלך* ✏️\n\nהשינויים שבוצעו:\n${changes.join('\n')}\n\nפרטי התור המעודכנים:\n📅 ${formatJerusalemDate(new Date(appointment.date))}\n🕐 שעת הגעה: ${appointment.time}\n🏁 שעת סיום: ${addMinutesToTime(appointment.time, appointment.duration)}\n✨ ${appointment.service}\n⏳ ${appointment.duration} דקות\n📌 סטטוס: ${getStatusLabel(appointment.status)}${noteSection}\n\nמחכים לך 🌸`
   );
 }
 
@@ -79,6 +116,7 @@ exports.updateAppointment = async (req, res) => {
       service: appointment.service,
       date: getJerusalemDateString(new Date(appointment.date)),
       time: appointment.time,
+      endTime: addMinutesToTime(appointment.time, appointment.duration),
       duration: Number(appointment.duration),
       status: appointment.status,
       notes: appointment.notes || ''
@@ -88,6 +126,9 @@ exports.updateAppointment = async (req, res) => {
     const customerPhone = String(req.body.customerPhone ?? appointment.customerPhone).replace(/\D/g, '');
     const service = String(req.body.service ?? appointment.service).trim();
     const time = String(req.body.time ?? appointment.time).trim();
+    const endTime = String(
+      req.body.endTime ?? addMinutesToTime(appointment.time, appointment.duration)
+    ).trim();
     const status = String(req.body.status ?? appointment.status);
     const notes = String(req.body.notes ?? appointment.notes ?? '').trim();
 
@@ -96,14 +137,14 @@ exports.updateAppointment = async (req, res) => {
       dateString = getJerusalemDateString(new Date(appointment.date));
     }
 
-    const duration = Number(req.body.duration ?? appointment.duration);
+    const duration = getMinutesBetween(time, endTime);
 
     if (!customerName || !/^05\d{8}$/.test(customerPhone)) {
       return res.status(400).json({ success: false, error: 'שם או מספר טלפון לא תקינים' });
     }
 
-    if (!/^([0-1]?\d|2[0-3]):[0-5]\d$/.test(time)) {
-      return res.status(400).json({ success: false, error: 'שעה לא תקינה' });
+    if (!/^([0-1]?\d|2[0-3]):[0-5]\d$/.test(time) || !/^([0-1]?\d|2[0-3]):[0-5]\d$/.test(endTime)) {
+      return res.status(400).json({ success: false, error: 'שעת הגעה או שעת סיום לא תקינה' });
     }
 
     if (!ALLOWED_STATUSES.includes(status)) {
@@ -161,6 +202,7 @@ exports.updateAppointment = async (req, res) => {
       date: dateString,
       formattedDate: formatJerusalemDate(newStart),
       time,
+      endTime,
       duration,
       status,
       notes
@@ -185,6 +227,14 @@ exports.updateAppointment = async (req, res) => {
     appointment.status = status;
     appointment.notes = notes;
 
+    if (previous.status === 'pending' && status === 'confirmed') {
+      appointment.approvalDecision = 'approved';
+      appointment.approvalDecisionAt = new Date();
+    } else if (previous.status === 'pending' && status === 'cancelled') {
+      appointment.approvalDecision = 'rejected';
+      appointment.approvalDecisionAt = new Date();
+    }
+
     if (scheduleChanged) {
       appointment.clientReminderSent = false;
       appointment.ownerReminderSent = false;
@@ -204,7 +254,7 @@ exports.updateAppointment = async (req, res) => {
 
         await whatsappService.sendMessage(
           appointment.customerPhone,
-          buildClientUpdateMessage(appointment, messageChanges)
+          buildClientUpdateMessage(appointment, messageChanges, previous.status)
         );
 
         whatsappNotificationSent = true;
