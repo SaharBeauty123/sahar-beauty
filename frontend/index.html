@@ -10,6 +10,13 @@
   <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@400;500;600;700&family=Montserrat:wght@300;400;500;600&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="style.css">
   <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/flatpickr/dist/flatpickr.min.css">
+  <style>
+    .owner-nav-link { display: none; }
+    @media (max-width: 1050px) {
+      .owner-header-link { display: none; }
+      .main-nav .owner-nav-link { display: block; color: var(--mocha); font-weight: 600; }
+    }
+  </style>
 </head>
 <body class="home-page">
   <header class="site-header">
@@ -21,6 +28,7 @@
       <a href="gallery.html" data-i18n="navPortfolio">גלריה</a>
       <a href="#testimonials" data-i18n="navReviews">המלצות</a>
       <a href="#contact" data-i18n="navContact">יצירת קשר</a>
+      <a href="admin.html" class="owner-nav-link" data-i18n="ownerLogin">כניסת בעלת העסק</a>
     </nav>
     <div class="header-actions">
       <div class="language-switcher" aria-label="Language selector">
@@ -28,7 +36,7 @@
         <button type="button" data-lang="he" class="active">HE</button>
         <button type="button" data-lang="en">EN</button>
       </div>
-      <a href="admin.html" class="admin-btn" data-i18n="ownerLogin">כניסת בעלת העסק</a>
+      <a href="admin.html" class="admin-btn owner-header-link" data-i18n="ownerLogin">כניסת בעלת העסק</a>
       <a href="#booking" class="header-book" data-i18n="bookNow">קבעי תור</a>
     </div>
   </header>
