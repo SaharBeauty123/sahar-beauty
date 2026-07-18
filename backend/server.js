@@ -13,6 +13,7 @@ const galleryRoutes = require('./routes/galleryRoutes');
 const settingsRoutes = require('./routes/settingsRoutes');
 const webhookRoutes = require('./routes/webhookRoutes');
 const feedbackRoutes = require('./routes/feedbackRoutes');
+const verificationRoutes = require('./routes/verificationRoutes');
 
 const adminController = require('./controllers/adminController');
 const cronService = require('./services/cronService');
@@ -49,6 +50,7 @@ app.use('/api/gallery', galleryRoutes);
 app.use('/api/settings', settingsRoutes);
 app.use('/api/webhooks', webhookRoutes);
 app.use('/api/feedback', feedbackRoutes);
+app.use('/api/verification', verificationRoutes);
 
 /* ========================
    HEALTH CHECK

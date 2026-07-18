@@ -61,14 +61,9 @@
       <div class="payment-options">
         <section class="payment-option">
           <h2 data-deposit-i18n="bitTitle">🟢 תשלום באמצעות Bit</h2>
-          <p data-deposit-i18n="bitText">לאחר התשלום התור יאושר אוטומטית.</p>
-          <button type="button" class="payment-action" onclick="payDeposit('bit')" data-deposit-i18n="bitButton">לתשלום בביט</button>
-        </section>
-
-        <section class="payment-option">
-          <h2 data-deposit-i18n="cashTitle">💵 תשלום במזומן</h2>
-          <p data-deposit-i18n="cashText">לתיאום תשלום מזומן ייפתח WhatsApp מול Sahar Beauty. התור יישאר ממתין לאישור.</p>
-          <button type="button" class="cash-button payment-action" onclick="openCashWhatsApp()" data-deposit-i18n="cashButton">לשיחת WhatsApp</button>
+          <p data-deposit-i18n="bitText">פתחי את Bit, השלימי את התשלום ואז חזרי לעמוד לאישור.</p>
+          <button type="button" class="payment-action" id="openBitButton" onclick="openBitPayment()" data-deposit-i18n="bitButton">פתיחת תשלום ב-Bit</button>
+          <button type="button" class="payment-action" id="confirmBitButton" onclick="confirmBitPayment()" data-deposit-i18n="confirmBitButton" hidden>שילמתי — אישור סופי</button>
         </section>
       </div>
 
@@ -82,9 +77,9 @@
     const OWNER_WHATSAPP = '972503172506';
     const DEMO_PAYMENT_LINK = 'https://example.com/bit-payment-demo';
     const depositTranslations = {
-      he: {navAbout:'אודות',navServices:'שירותים',navPortfolio:'גלריה',navReviews:'המלצות',navContact:'יצירת קשר',bookNow:'קבעי תור',depositTitle:'נשאר רק לשלם ערבון 🌸',depositIntro:'לשמירת התור יש לבחור אמצעי תשלום.',depositAmount:'סכום הערבון',bitTitle:'🟢 תשלום באמצעות Bit',bitText:'לאחר התשלום התור יאושר אוטומטית.',bitButton:'לתשלום בביט',cashTitle:'💵 תשלום במזומן',cashText:'לתיאום תשלום מזומן ייפתח WhatsApp מול Sahar Beauty. התור יישאר ממתין לאישור.',cashButton:'לשיחת WhatsApp',demoNote:'קישורי התשלום בעמוד זה הם זמניים לצורך הדגמה.'},
-      ar: {navAbout:'من أنا',navServices:'الخدمات',navPortfolio:'الأعمال',navReviews:'آراء العميلات',navContact:'تواصل',bookNow:'احجزي الآن',depositTitle:'بقي دفع العربون فقط 🌸',depositIntro:'لحفظ الموعد، اختاري طريقة الدفع.',depositAmount:'قيمة العربون',bitTitle:'🟢 الدفع بواسطة Bit',bitText:'بعد الدفع سيتم تأكيد الموعد تلقائياً.',bitButton:'الدفع عبر Bit',cashTitle:'💵 الدفع نقداً',cashText:'لتنسيق الدفع النقدي ستُفتح محادثة WhatsApp مع Sahar Beauty. سيبقى الموعد بانتظار التأكيد.',cashButton:'محادثة WhatsApp',demoNote:'روابط الدفع في هذه الصفحة مؤقتة لأغراض العرض.'},
-      en: {navAbout:'About',navServices:'Services',navPortfolio:'Portfolio',navReviews:'Reviews',navContact:'Contact',bookNow:'Book Now',depositTitle:'Just one step left: the deposit 🌸',depositIntro:'Choose a payment method to secure your appointment.',depositAmount:'Deposit amount',bitTitle:'🟢 Pay with Bit',bitText:'Your appointment will be confirmed automatically after payment.',bitButton:'Pay with Bit',cashTitle:'💵 Pay in cash',cashText:'WhatsApp will open so you can arrange cash payment with Sahar Beauty. The appointment will remain pending.',cashButton:'Open WhatsApp',demoNote:'The payment links on this page are temporary for demonstration purposes.'}
+      he: {navAbout:'אודות',navServices:'שירותים',navPortfolio:'גלריה',navReviews:'המלצות',navContact:'יצירת קשר',bookNow:'קבעי תור',depositTitle:'נשאר רק לשלם ערבון 🌸',depositIntro:'השלימי תשלום ב-Bit כדי לאשר את התור סופית.',depositAmount:'סכום הערבון',bitTitle:'🟢 תשלום באמצעות Bit',bitText:'פתחי את Bit, השלימי את התשלום ואז חזרי לעמוד לאישור.',bitButton:'פתיחת תשלום ב-Bit',confirmBitButton:'שילמתי — אישור סופי',demoNote:'קישור התשלום זמני לצורך הדגמה.'},
+      ar: {navAbout:'من أنا',navServices:'الخدمات',navPortfolio:'الأعمال',navReviews:'آراء العميلات',navContact:'تواصل',bookNow:'احجزي الآن',depositTitle:'بقي دفع العربون فقط 🌸',depositIntro:'أكملي الدفع عبر Bit لتأكيد الموعد نهائياً.',depositAmount:'قيمة العربون',bitTitle:'🟢 الدفع بواسطة Bit',bitText:'افتحي Bit وأكملي الدفع ثم عودي إلى الصفحة للتأكيد.',bitButton:'فتح الدفع عبر Bit',confirmBitButton:'دفعت — تأكيد نهائي',demoNote:'رابط الدفع مؤقت لأغراض العرض.'},
+      en: {navAbout:'About',navServices:'Services',navPortfolio:'Portfolio',navReviews:'Reviews',navContact:'Contact',bookNow:'Book Now',depositTitle:'Just one step left: the deposit 🌸',depositIntro:'Complete the Bit deposit to finalize your appointment.',depositAmount:'Deposit amount',bitTitle:'🟢 Pay with Bit',bitText:'Open Bit, complete payment, then return here to confirm.',bitButton:'Open Bit Payment',confirmBitButton:'I Paid — Finalize',demoNote:'The payment link is temporary for demonstration purposes.'}
     };
 
     function applyDepositLanguage(lang) {
@@ -109,44 +104,53 @@
 
     const params = new URLSearchParams(window.location.search);
     const appointmentId = params.get('id');
-    const savedAppointment = JSON.parse(localStorage.getItem('pendingDepositAppointment') || 'null');
+    const paymentToken = params.get('token');
 
-    if (!appointmentId || !savedAppointment || savedAppointment.id !== appointmentId) {
+    if (!appointmentId || !paymentToken) {
       showPaymentMessage('לא נמצאו פרטי התור. יש לחזור ולקבוע תור מחדש.', 'error');
     } else {
-      document.getElementById('appointmentSummary').textContent =
-        `${savedAppointment.customerName} • ${savedAppointment.service} • ${savedAppointment.date} • סיום ב-${savedAppointment.endTime}`;
-      document.getElementById('depositAmount').textContent = savedAppointment.amount ?? 0;
+      loadPaymentDetails();
     }
 
-    async function payDeposit(method) {
+    async function loadPaymentDetails() {
+      try {
+        const response = await fetch(`${API_URL}/appointments/payment/${appointmentId}?token=${encodeURIComponent(paymentToken)}`);
+        const result = await response.json();
+        if (!response.ok) throw new Error(result.error);
+        const appointment = result.data;
+        document.getElementById('appointmentSummary').textContent = `${appointment.customerName} • ${appointment.service} • ${new Date(appointment.date).toLocaleDateString()} • ${appointment.time}–${appointment.endTime}`;
+        document.getElementById('depositAmount').textContent = appointment.amount ?? 0;
+      } catch (error) {
+        showPaymentMessage(error.message || 'שגיאה בטעינת פרטי התשלום', 'error');
+        document.querySelectorAll('.payment-action').forEach((button) => { button.disabled = true; });
+      }
+    }
+
+    function openBitPayment() {
+      window.open(DEMO_PAYMENT_LINK, '_blank', 'noopener');
+      document.getElementById('confirmBitButton').hidden = false;
+    }
+
+    async function confirmBitPayment() {
       if (!appointmentId) return;
       const buttons = document.querySelectorAll('.payment-action');
       buttons.forEach((button) => { button.disabled = true; });
 
       try {
-        window.open(DEMO_PAYMENT_LINK, '_blank', 'noopener');
         const response = await fetch(`${API_URL}/appointments/${appointmentId}/deposit/confirm`, {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({ method })
+          body: JSON.stringify({ method: 'bit', token: paymentToken })
         });
         const result = await response.json();
         if (!response.ok) throw new Error(result.error || 'התשלום לא אושר');
 
-        localStorage.removeItem('pendingDepositAppointment');
         showPaymentMessage('✅ הערבון נקלט והתור שלך אושר בהצלחה!', 'success');
         setTimeout(() => { window.location.href = './gallery.html'; }, 1800);
       } catch (error) {
         buttons.forEach((button) => { button.disabled = false; });
         showPaymentMessage(error.message || 'שגיאה באישור התשלום', 'error');
       }
-    }
-
-    function openCashWhatsApp() {
-      if (!savedAppointment) return;
-      const message = `שלום, קבעתי תור ל-${savedAppointment.service} בתאריך ${savedAppointment.date}, עם שעת סיום ${savedAppointment.endTime}. אני רוצה לתאם תשלום ערבון במזומן. מספר תור: ${savedAppointment.id}`;
-      window.location.href = `https://wa.me/${OWNER_WHATSAPP}?text=${encodeURIComponent(message)}`;
     }
 
     function showPaymentMessage(text, type) {

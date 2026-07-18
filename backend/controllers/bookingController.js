@@ -1,9 +1,12 @@
 const jwt = require('jsonwebtoken');
+const crypto = require('crypto');
 const Appointment = require('../models/Appointment');
 const Service = require('../models/Service');
 const BusinessSettings = require('../models/BusinessSettings');
+const PhoneVerification = require('../models/PhoneVerification');
 const whatsappService = require('../services/whatsappService');
 const { withWhatsAppFooter } = require('../utils/whatsappMessage');
+const { hashToken } = require('../services/depositApprovalService');
 const {
   jerusalemDateTimeToUtc,
   formatJerusalemDate,
@@ -62,9 +65,24 @@ async function sendAndTrack(phone, message) {
   return result?.success === true;
 }
 
+async function consumePhoneVerification(phone, token) {
+  if (!token) return false;
+  const verification = await PhoneVerification.findOneAndUpdate(
+    {
+      phone,
+      verifiedTokenHash: crypto.createHash('sha256').update(String(token)).digest('hex'),
+      verifiedUntil: { $gt: new Date() },
+      consumedAt: null
+    },
+    { $set: { consumedAt: new Date() } },
+    { new: true }
+  );
+  return Boolean(verification);
+}
+
 exports.createAppointment = async (req, res) => {
   try {
-    const { customerName, customerPhone, service, date, time, endTime } = req.body;
+    const { customerName, customerPhone, service, date, time, endTime, verificationToken } = req.body;
     const createdByAdmin = isAuthenticatedAdmin(req);
 
     if (!customerName || !customerPhone || !service || !date || !endTime || (createdByAdmin && !time)) {
@@ -189,6 +207,13 @@ exports.createAppointment = async (req, res) => {
       });
     }
 
+    if (!createdByAdmin && !(await consumePhoneVerification(customerPhone, verificationToken))) {
+      return res.status(401).json({
+        success: false,
+        error: 'יש לאמת את מספר הטלפון לפני קביעת התור'
+      });
+    }
+
     const initialStatus = createdByAdmin ? 'confirmed' : 'pending';
     const now = new Date();
 
@@ -283,23 +308,26 @@ exports.confirmDemoDeposit = async (req, res) => {
       });
     }
 
-    const appointment = await Appointment.findByIdAndUpdate(
-      req.params.id,
+    const tokenHash = hashToken(req.body.token || '');
+    const appointment = await Appointment.findOneAndUpdate(
       {
-        $set: {
-          status: 'confirmed',
-          approvalDecision: 'approved',
-          approvalDecisionAt: new Date(),
-          depositStatus: 'paid',
-          depositMethod: method,
-          depositPaidAt: new Date()
-        }
+        _id: req.params.id,
+        status: 'awaiting-deposit',
+        depositStatus: 'unpaid',
+        depositPaymentTokenHash: tokenHash
       },
+      { $set: {
+        status: 'confirmed',
+        depositStatus: 'paid',
+        depositMethod: method,
+        depositPaidAt: new Date(),
+        depositPaymentTokenHash: null
+      } },
       { new: true, runValidators: true }
-    );
+    ).select('+depositPaymentTokenHash');
 
     if (!appointment) {
-      return res.status(404).json({ success: false, error: 'התור לא נמצא' });
+      return res.status(400).json({ success: false, error: 'קישור התשלום אינו תקין, כבר שולם או שהתור טרם אושר' });
     }
 
     res.json({
@@ -318,5 +346,35 @@ exports.confirmDemoDeposit = async (req, res) => {
   } catch (error) {
     console.error('שגיאה באישור הערבון:', error);
     res.status(500).json({ success: false, error: 'שגיאה באישור הערבון' });
+  }
+};
+
+exports.getDepositPaymentDetails = async (req, res) => {
+  try {
+    const appointment = await Appointment.findOne({
+      _id: req.params.id,
+      status: 'awaiting-deposit',
+      depositStatus: 'unpaid',
+      depositPaymentTokenHash: hashToken(req.query.token || '')
+    }).select('+depositPaymentTokenHash');
+
+    if (!appointment) {
+      return res.status(404).json({ success: false, error: 'קישור התשלום אינו תקין או שפג תוקפו' });
+    }
+
+    return res.json({
+      success: true,
+      data: {
+        id: appointment._id,
+        customerName: appointment.customerName,
+        service: appointment.service,
+        date: appointment.date,
+        time: appointment.time,
+        endTime: addMinutesToTime(appointment.time, appointment.duration),
+        amount: appointment.depositAmount
+      }
+    });
+  } catch (error) {
+    return res.status(500).json({ success: false, error: 'שגיאה בטעינת פרטי התשלום' });
   }
 };

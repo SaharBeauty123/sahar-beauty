@@ -22,6 +22,12 @@
     .feedback-status.success { color: #315c34; }
     .feedback-status.error { color: #8a3329; }
     .reviews-empty { grid-column: 1 / -1; padding: 45px; text-align: center; color: var(--muted); }
+    .booking-verification { display: grid; gap: 16px; }
+    .verification-code-row { display: grid; grid-template-columns: 1fr auto; gap: 12px; }
+    .verification-code-row button { width: auto; min-width: 135px; }
+    .booking-details[hidden], .verification-code-row[hidden] { display: none; }
+    .verified-phone { color: #315c34; font-size: 12px; }
+    @media (max-width: 520px) { .verification-code-row { grid-template-columns: 1fr; } .verification-code-row button { width: 100%; } }
   </style>
 </head>
 <body class="home-page">
@@ -100,21 +106,34 @@
         <p class="eyebrow" data-i18n="bookingEyebrow">הזמנת תור</p>
         <h2 data-i18n="bookingTitle">בואי ניצור יחד את המראה שלך</h2>
         <p data-i18n="bookingText">בחרי שירות, תאריך ושעת סיום רצויה. שעת ההגעה תחושב עבורך באופן אוטומטי.</p>
-        <div class="booking-note"><span>✦</span><p data-i18n="depositNote">לאחר שליחת הבקשה תועברי לבחירת אמצעי תשלום לערבון.</p></div>
+        <div class="booking-note"><span>✦</span><p data-i18n="depositFlowNote">לאחר אישור Sahar Beauty תקבלי ב-WhatsApp קישור לתשלום הערבון.</p></div>
       </div>
       <form id="bookingForm" class="booking-form reveal">
-        <div class="form-heading"><span data-i18n="stepLabel">הפרטים שלך</span><small>01 — 04</small></div>
-        <div class="form-row">
-          <div class="form-group"><label for="name" data-i18n="fullName">שם מלא</label><input type="text" id="name" name="customerName" required minlength="2" autocomplete="name" data-i18n-placeholder="namePlaceholder" placeholder="השם שלך"></div>
-          <div class="form-group"><label for="phone" data-i18n="phone">טלפון</label><input type="tel" id="phone" name="customerPhone" required pattern="^05\d{8}$" autocomplete="tel" placeholder="0501234567"></div>
+        <div class="booking-verification" id="bookingVerification">
+          <div class="form-heading"><span data-i18n="verifyPhoneTitle">אימות מספר WhatsApp</span><small>01 — 02</small></div>
+          <div class="form-group"><label for="verificationPhone" data-i18n="phone">טלפון</label><input type="tel" id="verificationPhone" pattern="^05\d{8}$" autocomplete="tel" placeholder="0501234567"></div>
+          <button type="button" id="sendVerificationCode" data-i18n="sendVerificationCode">שליחת קוד ב-WhatsApp</button>
+          <div class="verification-code-row" id="verificationCodeRow" hidden>
+            <input type="text" id="verificationCode" inputmode="numeric" maxlength="6" data-i18n-placeholder="verificationCodePlaceholder" placeholder="קוד בן 6 ספרות">
+            <button type="button" id="confirmVerificationCode" data-i18n="confirmVerificationCode">אימות הקוד</button>
+          </div>
+          <p id="verificationMessage" class="feedback-status" role="status"></p>
         </div>
-        <div class="form-group"><label for="service" data-i18n="chooseService">בחירת שירות</label><select id="service" name="service" required></select><p id="servicePriceDisplay"></p></div>
-        <div class="form-row">
-          <div class="form-group"><label for="date" data-i18n="date">תאריך</label><input type="text" id="date" name="date" required readonly></div>
-          <div class="form-group"><label for="time" data-i18n="endTime">שעת סיום התור</label><select id="time" name="time" required disabled><option value="" data-i18n="chooseFirst">בחרי תאריך ושירות</option></select><small id="availableMessage"></small></div>
+        <div class="booking-details" id="bookingDetails" hidden>
+          <div class="form-heading"><span data-i18n="stepLabel">הפרטים שלך</span><small>02 — 02</small></div>
+          <p class="verified-phone" id="verifiedPhoneMessage"></p>
+          <div class="form-row">
+            <div class="form-group"><label for="name" data-i18n="fullName">שם מלא</label><input type="text" id="name" name="customerName" minlength="2" autocomplete="name" data-i18n-placeholder="namePlaceholder" placeholder="השם שלך"></div>
+            <div class="form-group"><label for="phone" data-i18n="phone">טלפון מאומת</label><input type="tel" id="phone" name="customerPhone" readonly></div>
+          </div>
+          <div class="form-group"><label for="service" data-i18n="chooseService">בחירת שירות</label><select id="service" name="service"></select><p id="servicePriceDisplay"></p></div>
+          <div class="form-row">
+            <div class="form-group"><label for="date" data-i18n="date">תאריך</label><input type="text" id="date" name="date" readonly></div>
+            <div class="form-group"><label for="time" data-i18n="endTime">שעת סיום התור</label><select id="time" name="time" disabled><option value="" data-i18n="chooseFirst">בחרי תאריך ושירות</option></select><small id="availableMessage"></small></div>
+          </div>
+          <button type="button" onclick="submitBooking(event)" data-i18n="submitAppointment">שליחת בקשת התור</button>
+          <div id="messageBox"></div>
         </div>
-        <button type="button" onclick="submitBooking(event)" data-i18n="continueBooking">המשך להזמנה</button>
-        <div id="messageBox"></div>
       </form>
     </section>
 

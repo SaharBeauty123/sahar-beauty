@@ -2,6 +2,7 @@ const Appointment = require('../models/Appointment');
 const whatsappService = require('../services/whatsappService');
 const { withWhatsAppFooter } = require('../utils/whatsappMessage');
 const { formatJerusalemDate } = require('../utils/timeZone');
+const { approveAndRequestDeposit } = require('../services/depositApprovalService');
 
 const OWNER_WHATSAPP_PHONE = process.env.OWNER_WHATSAPP_PHONE || '0503172506';
 
@@ -117,7 +118,7 @@ exports.handleWahaWebhook = async (req, res) => {
     }
 
     const approved = text === '1';
-    const newStatus = approved ? 'confirmed' : 'cancelled';
+    const newStatus = approved ? 'awaiting-deposit' : 'cancelled';
     const decision = approved ? 'approved' : 'rejected';
 
     // Atomic update prevents duplicate webhook deliveries from deciding twice.
@@ -140,14 +141,18 @@ exports.handleWahaWebhook = async (req, res) => {
       return res.status(200).json({ success: true, processed: false, reason: 'already-processed' });
     }
 
-    await notifyClient(updated, approved);
+    if (approved) {
+      await approveAndRequestDeposit(updated);
+    } else {
+      await notifyClient(updated, false);
+    }
 
     const requestCode = String(updated._id).slice(-6).toUpperCase();
     await whatsappService.sendMessage(
       OWNER_WHATSAPP_PHONE,
       withWhatsAppFooter(
         approved
-          ? `✅ בקשת התור ${requestCode} אושרה.\n${updated.customerName} קיבל הודעת אישור.`
+          ? `✅ בקשת התור ${requestCode} אושרה.\n${updated.customerName} קיבלה קישור לתשלום הערבון.`
           : `❌ בקשת התור ${requestCode} נדחתה.\n${updated.customerName} קיבל הודעת דחייה.`
       )
     );

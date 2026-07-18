@@ -2,6 +2,7 @@ const Appointment = require('../models/Appointment');
 const Service = require('../models/Service');
 const whatsappService = require('../services/whatsappService');
 const { withWhatsAppFooter } = require('../utils/whatsappMessage');
+const { approveAndRequestDeposit } = require('../services/depositApprovalService');
 const {
   jerusalemDateTimeToUtc,
   getAppointmentInstant,
@@ -9,9 +10,10 @@ const {
   formatJerusalemDate
 } = require('../utils/timeZone');
 
-const ALLOWED_STATUSES = ['pending', 'confirmed', 'cancelled', 'completed', 'no-show'];
+const ALLOWED_STATUSES = ['pending', 'awaiting-deposit', 'confirmed', 'cancelled', 'completed', 'no-show'];
 const STATUS_LABELS = {
   pending: 'ממתין לאישור',
+  'awaiting-deposit': 'ממתין לתשלום ערבון',
   confirmed: 'אושר',
   cancelled: 'בוטל',
   completed: 'הושלם',
@@ -129,7 +131,10 @@ exports.updateAppointment = async (req, res) => {
     const endTime = String(
       req.body.endTime ?? addMinutesToTime(appointment.time, appointment.duration)
     ).trim();
-    const status = String(req.body.status ?? appointment.status);
+    let status = String(req.body.status ?? appointment.status);
+    if (appointment.status === 'pending' && status === 'confirmed') {
+      status = 'awaiting-deposit';
+    }
     const notes = String(req.body.notes ?? appointment.notes ?? '').trim();
 
     let dateString = req.body.date;
@@ -149,6 +154,10 @@ exports.updateAppointment = async (req, res) => {
 
     if (!ALLOWED_STATUSES.includes(status)) {
       return res.status(400).json({ success: false, error: 'סטטוס לא תקין' });
+    }
+
+    if (appointment.status === 'awaiting-deposit' && status === 'confirmed' && appointment.depositStatus !== 'paid') {
+      return res.status(400).json({ success: false, error: 'לא ניתן לאשר סופית לפני קליטת תשלום הערבון' });
     }
 
     if (!Number.isFinite(duration) || duration < 5 || duration > 480) {
@@ -227,7 +236,9 @@ exports.updateAppointment = async (req, res) => {
     appointment.status = status;
     appointment.notes = notes;
 
-    if (previous.status === 'pending' && status === 'confirmed') {
+    const approvalHandled = previous.status === 'pending' && status === 'awaiting-deposit';
+
+    if (approvalHandled) {
       appointment.approvalDecision = 'approved';
       appointment.approvalDecisionAt = new Date();
     } else if (previous.status === 'pending' && status === 'cancelled') {
@@ -241,12 +252,19 @@ exports.updateAppointment = async (req, res) => {
       appointment.upcomingEmailSent = false;
     }
 
-    await appointment.save();
+    let approvalResult = null;
+    if (approvalHandled) {
+      approvalResult = await approveAndRequestDeposit(appointment);
+    } else {
+      await appointment.save();
+    }
 
     let whatsappNotificationSent = false;
     let whatsappNotificationError = null;
 
-    if (hasMeaningfulChanges) {
+    if (approvalHandled) {
+      whatsappNotificationSent = approvalResult?.whatsappSent === true;
+    } else if (hasMeaningfulChanges) {
       try {
         const messageChanges = changes.length > 0
           ? changes

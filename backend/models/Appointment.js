@@ -38,7 +38,7 @@ const appointmentSchema = new mongoose.Schema({
 
   status: {
     type: String,
-    enum: ['pending', 'confirmed', 'cancelled', 'completed', 'no-show'],
+    enum: ['pending', 'awaiting-deposit', 'confirmed', 'cancelled', 'completed', 'no-show'],
     default: 'pending'
   },
 
@@ -60,6 +60,17 @@ const appointmentSchema = new mongoose.Schema({
   },
 
   depositPaidAt: {
+    type: Date,
+    default: null
+  },
+
+  depositPaymentTokenHash: {
+    type: String,
+    default: null,
+    select: false
+  },
+
+  depositPaymentLinkSentAt: {
     type: Date,
     default: null
   },
