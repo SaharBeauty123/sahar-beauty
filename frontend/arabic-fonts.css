@@ -1,0 +1,31 @@
+@import url('https://fonts.googleapis.com/css2?family=Aref+Ruqaa:wght@400;700&family=Noto+Naskh+Arabic:wght@400;500;600;700&display=swap');
+
+html[lang="ar"] body,
+html[lang="ar"] input,
+html[lang="ar"] select,
+html[lang="ar"] textarea,
+html[lang="ar"] button {
+  font-family: 'Noto Naskh Arabic', serif;
+}
+
+html[lang="ar"] h1,
+html[lang="ar"] h2,
+html[lang="ar"] h3,
+html[lang="ar"] .wordmark,
+html[lang="ar"] .hero-tagline,
+html[lang="ar"] .signature,
+html[lang="ar"] .review-card > p,
+html[lang="ar"] .form-heading {
+  font-family: 'Aref Ruqaa', serif;
+  letter-spacing: 0;
+}
+
+html[lang="ar"] .main-nav a,
+html[lang="ar"] .header-book,
+html[lang="ar"] .primary-cta,
+html[lang="ar"] .admin-btn,
+html[lang="ar"] .eyebrow,
+html[lang="ar"] .form-group label {
+  letter-spacing: 0;
+  text-transform: none;
+}
