@@ -60,7 +60,146 @@ document.addEventListener("DOMContentLoaded", () => {
   const confirmCodeButton = document.getElementById('confirmVerificationCode');
   if (sendCodeButton) sendCodeButton.addEventListener('click', requestVerificationCode);
   if (confirmCodeButton) confirmCodeButton.addEventListener('click', confirmVerificationCode);
+  initPhotoLine();
 });
+
+const HOME_GALLERY_IMAGES = [
+  'images/sahar-hero.png',
+  'images/ChatGPT-Image-Jun-22-2026-12_44_23-PM-600x600.png',
+  'images/WhatsApp-Image-2024-05-16-at-18.44.15.webp',
+  'images/images.jpg',
+  'images/קסשצפךק.jpg'
+];
+let photoLineIndex = 0;
+
+function normalizedPhotoIndex(index) {
+  return (index + HOME_GALLERY_IMAGES.length) % HOME_GALLERY_IMAGES.length;
+}
+
+function updatePhotoLineState(index) {
+  photoLineIndex = normalizedPhotoIndex(index);
+  document.querySelectorAll('.photo-line-slide').forEach((slide, slideIndex) => slide.classList.toggle('active', slideIndex === photoLineIndex));
+  document.querySelectorAll('.photo-line-dot').forEach((dot, dotIndex) => dot.classList.toggle('active', dotIndex === photoLineIndex));
+}
+
+function movePhotoLine(index, behavior = 'smooth') {
+  const viewport = document.getElementById('photoLineViewport');
+  const slides = document.querySelectorAll('.photo-line-slide');
+  if (!viewport || !slides.length) return;
+  const nextIndex = normalizedPhotoIndex(index);
+  const slide = slides[nextIndex];
+  viewport.scrollTo({ left: slide.offsetLeft - (viewport.clientWidth - slide.clientWidth) / 2, behavior });
+  updatePhotoLineState(nextIndex);
+}
+
+function openPhotoLightbox(index) {
+  const lightbox = document.getElementById('photoLightbox');
+  const image = document.getElementById('photoLightboxImage');
+  photoLineIndex = normalizedPhotoIndex(index);
+  image.src = HOME_GALLERY_IMAGES[photoLineIndex];
+  lightbox.classList.add('open');
+  document.body.style.overflow = 'hidden';
+}
+
+function movePhotoLightbox(direction) {
+  photoLineIndex = normalizedPhotoIndex(photoLineIndex + direction);
+  document.getElementById('photoLightboxImage').src = HOME_GALLERY_IMAGES[photoLineIndex];
+  movePhotoLine(photoLineIndex);
+}
+
+function closePhotoLightbox() {
+  document.getElementById('photoLightbox')?.classList.remove('open');
+  document.body.style.overflow = '';
+}
+
+function initPhotoLine() {
+  const track = document.getElementById('photoLineTrack');
+  const viewport = document.getElementById('photoLineViewport');
+  const dots = document.getElementById('photoLineDots');
+  const lightbox = document.getElementById('photoLightbox');
+  if (!track || !viewport || !dots || !lightbox) return;
+  let suppressSlideClick = false;
+
+  HOME_GALLERY_IMAGES.forEach((source, index) => {
+    const slide = document.createElement('button');
+    slide.type = 'button';
+    slide.className = 'photo-line-slide';
+    slide.setAttribute('aria-label', `Open portfolio photo ${index + 1}`);
+    const image = document.createElement('img');
+    image.src = source;
+    image.alt = `Sahar Beauty portfolio ${index + 1}`;
+    image.loading = index === 0 ? 'eager' : 'lazy';
+    slide.appendChild(image);
+    slide.addEventListener('click', () => { if (!suppressSlideClick) openPhotoLightbox(index); });
+    track.appendChild(slide);
+
+    const dot = document.createElement('button');
+    dot.type = 'button';
+    dot.className = 'photo-line-dot';
+    dot.addEventListener('click', () => movePhotoLine(index));
+    dots.appendChild(dot);
+  });
+
+  document.getElementById('photoLinePrev').addEventListener('click', () => movePhotoLine(photoLineIndex - 1));
+  document.getElementById('photoLineNext').addEventListener('click', () => movePhotoLine(photoLineIndex + 1));
+  document.getElementById('photoLightboxPrev').addEventListener('click', () => movePhotoLightbox(-1));
+  document.getElementById('photoLightboxNext').addEventListener('click', () => movePhotoLightbox(1));
+  document.getElementById('photoLightboxClose').addEventListener('click', closePhotoLightbox);
+  lightbox.addEventListener('click', (event) => { if (event.target === lightbox) closePhotoLightbox(); });
+
+  let pointerStartX = 0;
+  let pointerStartScroll = 0;
+  let pointerDragging = false;
+  viewport.addEventListener('pointerdown', (event) => {
+    if (event.pointerType !== 'mouse') return;
+    pointerStartX = event.clientX;
+    pointerStartScroll = viewport.scrollLeft;
+    pointerDragging = true;
+    suppressSlideClick = false;
+  });
+  viewport.addEventListener('pointermove', (event) => {
+    if (!pointerDragging) return;
+    const distance = event.clientX - pointerStartX;
+    if (Math.abs(distance) > 6) suppressSlideClick = true;
+    viewport.scrollLeft = pointerStartScroll - distance;
+  });
+  viewport.addEventListener('pointerup', (event) => {
+    if (!pointerDragging) return;
+    pointerDragging = false;
+    if (suppressSlideClick) setTimeout(() => { suppressSlideClick = false; }, 0);
+  });
+
+  let scrollFrame = null;
+  viewport.addEventListener('scroll', () => {
+    if (scrollFrame) cancelAnimationFrame(scrollFrame);
+    scrollFrame = requestAnimationFrame(() => {
+      const center = viewport.scrollLeft + viewport.clientWidth / 2;
+      let closestIndex = 0;
+      let closestDistance = Infinity;
+      document.querySelectorAll('.photo-line-slide').forEach((slide, index) => {
+        const distance = Math.abs(slide.offsetLeft + slide.clientWidth / 2 - center);
+        if (distance < closestDistance) { closestDistance = distance; closestIndex = index; }
+      });
+      updatePhotoLineState(closestIndex);
+    });
+  }, { passive: true });
+
+  let touchStartX = 0;
+  lightbox.addEventListener('touchstart', (event) => { touchStartX = event.changedTouches[0].clientX; }, { passive: true });
+  lightbox.addEventListener('touchend', (event) => {
+    const distance = event.changedTouches[0].clientX - touchStartX;
+    if (Math.abs(distance) > 45) movePhotoLightbox(distance > 0 ? -1 : 1);
+  }, { passive: true });
+
+  document.addEventListener('keydown', (event) => {
+    if (!lightbox.classList.contains('open')) return;
+    if (event.key === 'Escape') closePhotoLightbox();
+    if (event.key === 'ArrowLeft') movePhotoLightbox(-1);
+    if (event.key === 'ArrowRight') movePhotoLightbox(1);
+  });
+
+  requestAnimationFrame(() => movePhotoLine(0, 'auto'));
+}
 
 function getUiDictionary() {
   return translations[localStorage.getItem('saharLanguage') || 'he'] || translations.he;

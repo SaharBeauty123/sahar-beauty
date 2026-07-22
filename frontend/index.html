@@ -29,6 +29,30 @@
     .booking-details[hidden], .verification-code-row[hidden] { display: none; }
     .verified-phone { color: #315c34; font-size: 12px; }
     @media (max-width: 520px) { .verification-code-row { grid-template-columns: 1fr; } .verification-code-row button { width: 100%; } }
+    .home-photo-line { padding: clamp(55px, 7vw, 95px) 0; overflow: hidden; background: linear-gradient(180deg, var(--ivory), var(--ivory-alt)); }
+    .photo-line-shell { position: relative; width: 100%; }
+    .photo-line-viewport { direction: ltr; overflow-x: auto; scroll-snap-type: x mandatory; scrollbar-width: none; overscroll-behavior-inline: contain; touch-action: pan-x; cursor: grab; }
+    .photo-line-viewport:active { cursor: grabbing; }
+    .photo-line-viewport::-webkit-scrollbar { display: none; }
+    .photo-line-track { display: flex; gap: clamp(12px, 2vw, 24px); width: max-content; padding-inline: max(12vw, calc((100vw - min(68vw, 540px)) / 2)); }
+    .photo-line-slide { flex: 0 0 min(68vw, 540px); height: clamp(360px, 58vw, 680px); padding: 0; border: 0; border-radius: 3px; overflow: hidden; background: var(--sand); scroll-snap-align: center; cursor: zoom-in; opacity: .5; transform: scale(.9); transition: opacity .4s ease, transform .5s ease; }
+    .photo-line-slide.active { opacity: 1; transform: scale(1); }
+    .photo-line-slide:hover { background: var(--sand); transform: scale(.92); }
+    .photo-line-slide.active:hover { transform: scale(1); }
+    .photo-line-slide img { width: 100%; height: 100%; object-fit: cover; pointer-events: none; filter: saturate(.85); }
+    .photo-line-arrow { position: absolute; z-index: 4; top: 50%; display: grid; place-items: center; width: 50px; height: 50px; padding: 0; border: 1px solid rgba(255,255,255,.7); border-radius: 50%; background: rgba(74,52,40,.78); color: #fff; font-size: 25px; cursor: pointer; transform: translateY(-50%); backdrop-filter: blur(8px); }
+    .photo-line-arrow:hover { background: var(--espresso); transform: translateY(-50%) scale(1.04); }
+    .photo-line-prev { left: clamp(14px, 4vw, 60px); }
+    .photo-line-next { right: clamp(14px, 4vw, 60px); }
+    .photo-line-dots { display: flex; direction: ltr; justify-content: center; gap: 8px; margin-top: 28px; }
+    .photo-line-dot { width: 6px; height: 6px; padding: 0; border: 0; border-radius: 50%; background: var(--taupe-light); cursor: pointer; }
+    .photo-line-dot.active { width: 22px; border-radius: 999px; background: var(--mocha); }
+    .photo-lightbox { position: fixed; inset: 0; z-index: 300; display: none; align-items: center; justify-content: center; padding: 25px 80px; background: rgba(27,19,15,.94); }
+    .photo-lightbox.open { display: flex; }
+    .photo-lightbox-image { max-width: min(1000px, 86vw); max-height: 90vh; object-fit: contain; user-select: none; }
+    .photo-lightbox-close { position: absolute; top: 20px; right: 25px; width: 46px; height: 46px; padding: 0; border: 0; background: transparent; color: #fff; font-size: 38px; cursor: pointer; }
+    .photo-lightbox .photo-line-arrow { position: fixed; }
+    @media (max-width: 680px) { .photo-line-slide { flex-basis: 78vw; height: 108vw; max-height: 570px; } .photo-line-track { padding-inline: 11vw; } .photo-line-arrow { width: 42px; height: 42px; font-size: 21px; } .photo-line-prev { left: 8px; } .photo-line-next { right: 8px; } .photo-lightbox { padding: 65px 44px 25px; } .photo-lightbox-image { max-width: 100%; max-height: 82vh; } }
   </style>
 </head>
 <body class="home-page">
@@ -37,7 +61,6 @@
     <button class="menu-toggle" type="button" aria-label="Open navigation" aria-expanded="false">☰</button>
     <nav class="main-nav" aria-label="Primary navigation">
       <a href="#about" data-i18n="navAbout">אודות</a>
-      <a href="#services" data-i18n="navServices">שירותים</a>
       <a href="gallery.html" data-i18n="navPortfolio">גלריה</a>
       <a href="#testimonials" data-i18n="navReviews">המלצות</a>
       <a href="#contact" data-i18n="navFeedback">משוב</a>
@@ -64,7 +87,18 @@
         <p class="hero-copy" data-i18n="heroCopy">יופי טבעי, נוכחות שקטה וחוויה אישית שמרגישה יוקרתית מהרגע הראשון.</p>
         <a href="#booking" class="primary-cta" data-i18n="bookNow">קבעי תור</a>
       </div>
-      <a href="#about" class="scroll-cue" aria-label="Scroll to about">↓</a>
+      <a href="#photo-line" class="scroll-cue" aria-label="Scroll to portfolio">↓</a>
+    </section>
+
+    <section class="home-photo-line" id="photo-line" aria-label="Sahar Beauty portfolio carousel">
+      <div class="photo-line-shell">
+        <button class="photo-line-arrow photo-line-prev" id="photoLinePrev" type="button" aria-label="Previous photo">‹</button>
+        <div class="photo-line-viewport" id="photoLineViewport">
+          <div class="photo-line-track" id="photoLineTrack"></div>
+        </div>
+        <button class="photo-line-arrow photo-line-next" id="photoLineNext" type="button" aria-label="Next photo">›</button>
+      </div>
+      <div class="photo-line-dots" id="photoLineDots" aria-hidden="true"></div>
     </section>
 
     <section class="philosophy section-pad reveal" id="about">
@@ -77,23 +111,6 @@
         <p data-i18n="aboutP1">Sahar היא מאפרת המתמחה בכלות ובאיפור ערב, עם ניסיון מקצועי וגישה מדויקת שמדגישה את היופי הטבעי במקום להסתיר אותו.</p>
         <p data-i18n="aboutP2">כל מפגש בנוי כחוויה רגועה, אישית ומוקפדת — משיחת ההיכרות וההזמנה ועד הרגע האחרון של האירוע.</p>
         <div class="signature">Sahar</div>
-      </div>
-    </section>
-
-    <section class="services-section section-pad" id="services">
-      <div class="center-heading reveal">
-        <p class="eyebrow" data-i18n="servicesEyebrow">השירותים שלנו</p>
-        <h2 data-i18n="servicesTitle">נוצר במיוחד לרגע שלך</h2>
-      </div>
-      <div class="services-grid">
-        <article class="service-card reveal"><span>01</span><div class="service-visual service-one" style="background-image:linear-gradient(0deg,rgba(74,52,40,.1),transparent 55%),url('images/service-bridal.png');background-size:cover;background-position:center"></div><h3 data-i18n="serviceBridal">איפור כלות</h3><p data-i18n="serviceBridalText">מראה עמיד, מצולם ומדויק שמלווה אותך ברכות לאורך היום.</p></article>
-        <article class="service-card reveal"><span>02</span><div class="service-visual service-two" style="background-image:linear-gradient(0deg,rgba(74,52,40,.1),transparent 55%),url('images/service-engagement.png');background-size:cover;background-position:center"></div><h3 data-i18n="serviceEngagement">איפור אירוסין</h3><p data-i18n="serviceEngagementText">זוהר אלגנטי ומאוזן לערב חד־פעמי ובלתי נשכח.</p></article>
-        <article class="service-card reveal"><span>03</span><div class="service-visual service-three" style="background-image:linear-gradient(0deg,rgba(74,52,40,.1),transparent 55%),url('images/service-event.png');background-size:cover;background-position:center"></div><h3 data-i18n="serviceEvent">איפור אירועים</h3><p data-i18n="serviceEventText">מראה מחמיא ומוקפד שמותאם לסגנון, לבגד ולתאורה.</p></article>
-        <article class="service-card reveal"><span>04</span><div class="service-visual service-four" style="background-image:linear-gradient(0deg,rgba(74,52,40,.1),transparent 55%),url('images/service-photoshoot.png');background-size:cover;background-position:center"></div><h3 data-i18n="servicePhoto">איפור לצילומים</h3><p data-i18n="servicePhotoText">איפור מקצועי שמעניק עומק, אחידות ונוכחות מול המצלמה.</p></article>
-      </div>
-      <div class="coming-soon reveal">
-        <p class="eyebrow" data-i18n="comingSoon">בקרוב</p>
-        <div><span data-i18n="masterclasses">כיתות אמן וקורסי איפור</span><span>•</span><span data-i18n="training">הכשרה מקצועית</span><span>•</span><span data-i18n="privateLessons">שיעורים פרטיים 1:1</span></div>
       </div>
     </section>
 
@@ -160,6 +177,13 @@
     <p>Bridal &amp; Event Makeup Artist</p>
     <div><span>© 2026 Sahar Beauty</span></div>
   </footer>
+
+  <div class="photo-lightbox" id="photoLightbox" role="dialog" aria-modal="true" aria-label="Enlarged portfolio photo">
+    <button class="photo-lightbox-close" id="photoLightboxClose" type="button" aria-label="Close">×</button>
+    <button class="photo-line-arrow photo-line-prev" id="photoLightboxPrev" type="button" aria-label="Previous photo">‹</button>
+    <img class="photo-lightbox-image" id="photoLightboxImage" alt="Sahar Beauty portfolio">
+    <button class="photo-line-arrow photo-line-next" id="photoLightboxNext" type="button" aria-label="Next photo">›</button>
+  </div>
 
   <a class="whatsapp-float" href="https://wa.me/972538800769" target="_blank" rel="noopener" aria-label="Chat on WhatsApp"><svg viewBox="0 0 32 32" width="27" height="27" aria-hidden="true" focusable="false"><path fill="currentColor" d="M16 3a12.8 12.8 0 0 0-11 19.4L3.5 28l5.8-1.5A12.9 12.9 0 1 0 16 3Zm0 2.3a10.5 10.5 0 1 1-5.4 19.5l-.4-.2-3.4.9.9-3.3-.3-.5A10.5 10.5 0 0 1 16 5.3Zm-4.6 4.9c-.3 0-.7.1-1 .5-.4.4-1.3 1.3-1.3 3.1 0 1.8 1.3 3.6 1.5 3.8.2.3 2.6 4 6.4 5.5 3.1 1.2 3.8 1 4.5.9.7-.1 2.3-1 2.6-1.9.3-.9.3-1.7.2-1.9-.1-.2-.4-.3-.8-.5l-2.7-1.3c-.4-.2-.7-.3-1 .3l-1.2 1.5c-.2.3-.5.3-.9.1a8.6 8.6 0 0 1-2.6-1.6 9.7 9.7 0 0 1-1.8-2.3c-.2-.4 0-.6.2-.8l.6-.7.4-.7c.1-.3 0-.5 0-.7l-1.2-2.8c-.3-.7-.7-.7-.9-.7h-1Z"/></svg></a>
   <script src="https://cdn.jsdelivr.net/npm/flatpickr"></script>
