@@ -55,13 +55,18 @@ async function getWahaConfig() {
 async function sendDirect(phone, message) {
   const config = await getWahaConfig();
   const normalized = normalizePhone(phone);
+  const configuredTimeout = Number(process.env.WAHA_TIMEOUT_MS || 45000);
+  const timeout = Number.isFinite(configuredTimeout)
+    ? Math.min(Math.max(configuredTimeout, 15000), 120000)
+    : 45000;
 
   const response = await axios.post(
     `${config.url}/api/sendText`,
     {
       chatId: `${normalized}@c.us`,
       text: message,
-      session: process.env.WAHA_SESSION
+      session: process.env.WAHA_SESSION,
+      linkPreview: false
     },
     {
       headers: {
@@ -70,7 +75,7 @@ async function sendDirect(phone, message) {
           : {}),
         'Content-Type': 'application/json'
       },
-      timeout: 15000
+      timeout
     }
   );
 
