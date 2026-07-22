@@ -44,7 +44,7 @@ function buildChangeList(previous, next) {
   }
 
   if (previous.service !== next.service) {
-    changes.push(`✂️/💆‍♂️ שירות: ${next.service}`);
+    changes.push(`💄 טיפול: ${next.service}`);
   }
 
   if (previous.date !== next.date) {
@@ -81,7 +81,7 @@ function buildClientUpdateMessage(appointment, changes, previousStatus) {
 
   if (previousStatus === 'pending' && appointment.status === 'confirmed') {
     return withWhatsAppFooter(
-      `שלום ${appointment.customerName} 🌸\n\nבקשת התור שלך אושרה בהצלחה ✅\n\n📅 ${formatJerusalemDate(new Date(appointment.date))}\n🕐 שעת הגעה: ${appointment.time}\n🏁 שעת סיום: ${addMinutesToTime(appointment.time, appointment.duration)}\n✨ שירות: ${appointment.service}\n⏳ משך: ${appointment.duration} דקות${noteSection}\n\nמחכים לך 🌸`
+      `היי ${appointment.customerName} אהובה 🌸\n\nבשמחה רבה, בקשת התור שלך ב-Sahar Beauty אושרה ✨\n\n📅 תאריך: ${formatJerusalemDate(new Date(appointment.date))}\n🕐 שעת הגעה: ${appointment.time}\n🏁 שעת סיום: ${addMinutesToTime(appointment.time, appointment.duration)}\n💄 טיפול: ${appointment.service}\n⏳ משך הטיפול: ${appointment.duration} דקות${noteSection}\n\nהזמן הזה שמור במיוחד עבורך. מחכות לך באהבה 🤍`
     );
   }
 
@@ -89,18 +89,18 @@ function buildClientUpdateMessage(appointment, changes, previousStatus) {
     const reason = String(appointment.notes || '').trim();
     const reasonSection = reason ? `\n\n📝 סיבת הדחייה: ${reason}` : '';
     return withWhatsAppFooter(
-      `שלום ${appointment.customerName} 👋\n\nלצערנו, בקשת התור שלך נדחתה ❌\n\n📅 ${formatJerusalemDate(new Date(appointment.date))}\n🕐 שעת הגעה: ${appointment.time}\n🏁 שעת סיום: ${addMinutesToTime(appointment.time, appointment.duration)}\n✨ שירות: ${appointment.service}${reasonSection}\n\nניתן לבחור מועד אחר באתר.`
+      `היי ${appointment.customerName} אהובה 🌸\n\nלצערנו לא נוכל לאשר את בקשת התור במועד שבחרת.\n\n📅 תאריך: ${formatJerusalemDate(new Date(appointment.date))}\n🕐 שעת הגעה: ${appointment.time}\n🏁 שעת סיום: ${addMinutesToTime(appointment.time, appointment.duration)}\n💄 טיפול: ${appointment.service}${reasonSection}\n\nנשמח שתבחרי מועד אחר שמתאים לך, ונעשה הכול כדי למצוא עבורך זמן מושלם 🤍`
     );
   }
 
   if (appointment.status === 'cancelled') {
     return withWhatsAppFooter(
-      `שלום ${appointment.customerName} 👋\n\n*התור שלך בוטל על ידי Sahar Beauty*.\n\n📅 ${formatJerusalemDate(new Date(appointment.date))}\n🕐 שעת הגעה: ${appointment.time}\n🏁 שעת סיום: ${addMinutesToTime(appointment.time, appointment.duration)}\n✨ ${appointment.service}${noteSection}\n\nלפרטים נוספים ניתן ליצור קשר עם העסק.`
+      `היי ${appointment.customerName} אהובה 🌸\n\nרצינו לעדכן שהתור שלך ב-Sahar Beauty בוטל.\n\n📅 תאריך: ${formatJerusalemDate(new Date(appointment.date))}\n🕐 שעת הגעה: ${appointment.time}\n🏁 שעת סיום: ${addMinutesToTime(appointment.time, appointment.duration)}\n💄 טיפול: ${appointment.service}${noteSection}\n\nאנחנו כאן עבורך ונשמח לעזור לך לבחור מועד חדש 🤍`
     );
   }
 
   return withWhatsAppFooter(
-    `שלום ${appointment.customerName} 🌸\n\n*Sahar Beauty עדכנה את התור שלך* ✏️\n\nהשינויים שבוצעו:\n${changes.join('\n')}\n\nפרטי התור המעודכנים:\n📅 ${formatJerusalemDate(new Date(appointment.date))}\n🕐 שעת הגעה: ${appointment.time}\n🏁 שעת סיום: ${addMinutesToTime(appointment.time, appointment.duration)}\n✨ ${appointment.service}\n⏳ ${appointment.duration} דקות\n📌 סטטוס: ${getStatusLabel(appointment.status)}${noteSection}\n\nמחכים לך 🌸`
+    `היי ${appointment.customerName} אהובה 🌸\n\nעדכנו עבורך את פרטי התור ב-Sahar Beauty ✨\n\nמה השתנה:\n${changes.join('\n')}\n\nפרטי התור המעודכנים:\n📅 תאריך: ${formatJerusalemDate(new Date(appointment.date))}\n🕐 שעת הגעה: ${appointment.time}\n🏁 שעת סיום: ${addMinutesToTime(appointment.time, appointment.duration)}\n💄 טיפול: ${appointment.service}\n⏳ משך הטיפול: ${appointment.duration} דקות\n📌 סטטוס: ${getStatusLabel(appointment.status)}${noteSection}\n\nכדאי לשמור את ההודעה. מחכות לך לחוויה יפה ורגועה 🤍`
   );
 }
 

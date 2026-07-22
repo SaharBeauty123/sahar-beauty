@@ -246,7 +246,7 @@ exports.createAppointment = async (req, res) => {
 
     if (createdByAdmin) {
       const confirmationMessage = withWhatsAppFooter(
-        `שלום ${appointment.customerName} 🌸\n\nהתור שלך נקבע ואושר בהצלחה ✅\n📅 ${formatJerusalemDate(appointmentDateTime)}\n🕐 שעת הגעה: ${appointment.time}\n🏁 שעת סיום: ${appointmentEndTime}\n✨ ${appointment.service}\n⏳ ${appointment.duration} דקות\n\nמחכים לך 🌸`
+        `היי ${appointment.customerName} אהובה 🌸\n\nהתור שלך ב-Sahar Beauty נקבע ואושר בהצלחה ✨\n\n📅 תאריך: ${formatJerusalemDate(appointmentDateTime)}\n🕐 שעת הגעה: ${appointment.time}\n🏁 שעת סיום: ${appointmentEndTime}\n💄 טיפול: ${appointment.service}\n⏳ משך הטיפול: ${appointment.duration} דקות\n\nהזמן הזה שמור במיוחד עבורך. מחכות לפנק אותך ולהכין אותך לרגע שלך 🤍`
       );
 
       sendAndTrack(appointment.customerPhone, confirmationMessage)
@@ -264,7 +264,7 @@ exports.createAppointment = async (req, res) => {
     const requestCode = String(appointment._id).slice(-6).toUpperCase();
 
     const waitingMessage = withWhatsAppFooter(
-      `שלום ${appointment.customerName} 👋\n\nבקשת התור שלך התקבלה וממתינה לאישור Sahar Beauty ⏳\n\n📅 ${formatJerusalemDate(appointmentDateTime)}\n🕐 שעת סיום: ${appointmentEndTime}\n✨ ${appointment.service}\n⏳ ${appointment.duration} דקות\n💳 ערבון: ₪${appointment.depositAmount} (${depositPercentage}%)\n\nנשלח אליך עדכון מיד לאחר ש-Sahar Beauty תאשר או תדחה את הבקשה.`
+      `היי ${appointment.customerName} אהובה 🌸\n\nקיבלנו את בקשת התור שלך והיא ממתינה לאישור של Sahar Beauty ✨\n\nפרטי הבקשה:\n📅 תאריך: ${formatJerusalemDate(appointmentDateTime)}\n🕐 שעת הגעה משוערת: ${appointment.time}\n🏁 שעת סיום: ${appointmentEndTime}\n💄 טיפול: ${appointment.service}\n⏳ משך הטיפול: ${appointment.duration} דקות\n💳 ערבון לאחר אישור: ₪${appointment.depositAmount} (${depositPercentage}%)\n\nנעדכן אותך כאן מיד לאחר בדיקת הבקשה. אם תאושר, תקבלי קישור מאובטח לתשלום הערבון 🤍`
     );
 
     const ownerApprovalMessage = withWhatsAppFooter(
@@ -337,7 +337,7 @@ exports.confirmDemoDeposit = async (req, res) => {
     });
 
     const confirmationMessage = withWhatsAppFooter(
-      `שלום ${appointment.customerName} 🌸\n\nהערבון בסך ₪${appointment.depositAmount} סומן כשולם באמצעות Bit.\nהתור שלך אושר בהצלחה ✅\n\n📅 ${formatJerusalemDate(new Date(appointment.date))}\n🕐 שעת הגעה: ${appointment.time}\n🏁 שעת סיום: ${addMinutesToTime(appointment.time, appointment.duration)}\n✨ ${appointment.service}`
+      `היי ${appointment.customerName} אהובה 🌸\n\nהתשלום התקבל בהצלחה והתור שלך ב-Sahar Beauty מאושר סופית ✨\n\n💳 ערבון ששולם ב-Bit: ₪${appointment.depositAmount}\n\nפרטי התור שלך:\n📅 תאריך: ${formatJerusalemDate(new Date(appointment.date))}\n🕐 שעת הגעה: ${appointment.time}\n🏁 שעת סיום: ${addMinutesToTime(appointment.time, appointment.duration)}\n💄 טיפול: ${appointment.service}\n\nהזמן שמור במיוחד עבורך. מחכות לך לחוויה נשית, רגועה ומפנקת 🤍`
     );
 
     sendAndTrack(appointment.customerPhone, confirmationMessage).catch((error) => {

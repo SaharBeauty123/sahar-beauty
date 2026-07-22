@@ -2,6 +2,7 @@ const Appointment = require('../models/Appointment');
 const emailService = require('../services/emailService');
 const whatsappService = require("../services/whatsappService");
 const BusinessSettings = require("../models/BusinessSettings");
+const { withWhatsAppFooter } = require('../utils/whatsappMessage');
 /**
  * 
  * יצירת תור חדש
@@ -83,7 +84,7 @@ exports.createAppointment = async (req, res) => {
         if (whatsappService && typeof whatsappService.sendMessage === 'function') {
           await whatsappService.sendMessage(
             appointment.customerPhone,
-            `שלום ${appointment.customerName} 👋\n\nהתור שלך נקבע בהצלחה ✅\n📅 ${appointmentDateTime.toLocaleDateString("he-IL")}\n🕐 ${appointment.time}\n✂️/💆‍♂️ ${appointment.service}\n\nמחכים לך 💈\nhttps://fadila-barber.netlify.app/`
+            withWhatsAppFooter(`היי ${appointment.customerName} אהובה 🌸\n\nהתור שלך ב-Sahar Beauty נקבע בהצלחה ✨\n\n📅 תאריך: ${appointmentDateTime.toLocaleDateString('he-IL')}\n🕐 שעת הגעה: ${appointment.time}\n💄 טיפול: ${appointment.service}\n\nהזמן הזה שמור במיוחד עבורך. מחכות לך באהבה 🤍`)
           );
         }
       } catch (wsErr) {

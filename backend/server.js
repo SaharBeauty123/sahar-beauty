@@ -58,7 +58,7 @@ app.use('/api/verification', verificationRoutes);
 app.get('/api/health', (req, res) => {
   res.json({
     success: true,
-    message: 'Fadila Barber API is running',
+    message: 'Sahar Beauty API is running',
     timestamp: new Date().toISOString(),
     businessTime: new Date().toLocaleString('he-IL', {
       timeZone: 'Asia/Jerusalem'
@@ -71,7 +71,7 @@ app.get('/api/health', (req, res) => {
 app.get('/', (req, res) => {
   res.json({
     success: true,
-    message: 'Fadila Barber backend is running. Use the Netlify URL for the frontend.',
+    message: 'Sahar Beauty backend is running. Use the website URL for the frontend.',
     health: '/api/health'
   });
 });
@@ -132,7 +132,7 @@ async function ensureSettings() {
 const PORT = process.env.PORT || 5001;
 
 app.listen(PORT, () => {
-  console.log(`\n💈 Fadila Barber Backend API running on port ${PORT}`);
+  console.log(`\n✨ Sahar Beauty Backend API running on port ${PORT}`);
   console.log(`🕒 Business timezone: ${process.env.TZ}`);
   console.log('📨 WAHA approval webhook: /api/webhooks/waha');
 

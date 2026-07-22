@@ -103,7 +103,7 @@ class CronService {
 
   async sendClientReminder(appointment, appointmentInstant, minutesLeft) {
     const message = withWhatsAppFooter(
-      `שלום ${appointment.customerName} 👋\n\nרק תזכורת ⏰\nהתור שלך מתחיל בעוד כשעה או פחות (${Math.max(0, minutesLeft)} דקות).\n\n📅 ${formatJerusalemDate(appointmentInstant)}\n🕐 ${appointment.time}\n✂️/💆‍♂️ ${appointment.service}\n\nמחכים לך 💈`
+      `היי ${appointment.customerName} אהובה 🌸\n\nרק מזכירות שהרגע שלך ב-Sahar Beauty מתקרב ✨\nהתור שלך מתחיל בעוד ${Math.max(0, minutesLeft)} דקות.\n\n📅 תאריך: ${formatJerusalemDate(appointmentInstant)}\n🕐 שעת הגעה: ${appointment.time}\n💄 טיפול: ${appointment.service}\n\nמחכות לך באהבה — תגיעי רגועה, אנחנו נדאג לכל השאר 🤍`
     );
 
     try {
@@ -133,7 +133,7 @@ class CronService {
 
   async sendOwnerReminder(appointment, appointmentInstant, minutesLeft) {
     const message = withWhatsAppFooter(
-      `⏰ תזכורת לבעל העסק\n\nהתור הבא מתחיל בעוד ${Math.max(0, minutesLeft)} דקות.\n\n👤 שם: ${appointment.customerName}\n📞 טלפון: ${appointment.customerPhone}\n✂️/💆‍♂️ שירות: ${appointment.service}\n📅 תאריך: ${formatJerusalemDate(appointmentInstant)}\n🕐 שעה: ${appointment.time}`
+      `⏰ תזכורת לבעלת העסק\n\nהתור הבא מתחיל בעוד ${Math.max(0, minutesLeft)} דקות.\n\n👤 שם הלקוחה: ${appointment.customerName}\n📞 טלפון: ${appointment.customerPhone}\n💄 טיפול: ${appointment.service}\n📅 תאריך: ${formatJerusalemDate(appointmentInstant)}\n🕐 שעה: ${appointment.time}`
     );
 
     try {

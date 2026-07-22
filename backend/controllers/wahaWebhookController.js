@@ -76,10 +76,10 @@ function isOwner(sender) {
 async function notifyClient(appointment, approved) {
   const message = approved
     ? withWhatsAppFooter(
-      `שלום ${appointment.customerName} 🌸\n\nהתור שלך אושר בהצלחה על ידי Sahar Beauty ✅\n\n📅 ${formatJerusalemDate(new Date(appointment.date))}\n🕐 שעת הגעה: ${appointment.time}\n🏁 שעת סיום: ${addMinutesToTime(appointment.time, appointment.duration)}\n✨ ${appointment.service}\n⏳ ${appointment.duration} דקות\n\nמחכים לך 🌸`
+      `היי ${appointment.customerName} אהובה 🌸\n\nבשמחה רבה, התור שלך ב-Sahar Beauty אושר ✨\n\n📅 תאריך: ${formatJerusalemDate(new Date(appointment.date))}\n🕐 שעת הגעה: ${appointment.time}\n🏁 שעת סיום: ${addMinutesToTime(appointment.time, appointment.duration)}\n💄 טיפול: ${appointment.service}\n⏳ משך הטיפול: ${appointment.duration} דקות\n\nמחכות לפנק אותך ולהכין אותך לרגע המיוחד שלך 🤍`
     )
     : withWhatsAppFooter(
-      `שלום ${appointment.customerName} 👋\n\nלצערנו, בקשת התור שלך נדחתה על ידי Sahar Beauty ❌\n\n📅 ${formatJerusalemDate(new Date(appointment.date))}\n🕐 שעת הגעה: ${appointment.time}\n🏁 שעת סיום: ${addMinutesToTime(appointment.time, appointment.duration)}\n✨ ${appointment.service}\n\nניתן לבחור מועד אחר באתר.`
+      `היי ${appointment.customerName} אהובה 🌸\n\nלצערנו לא נוכל לאשר את בקשת התור במועד שבחרת.\n\n📅 תאריך: ${formatJerusalemDate(new Date(appointment.date))}\n🕐 שעת הגעה: ${appointment.time}\n🏁 שעת סיום: ${addMinutesToTime(appointment.time, appointment.duration)}\n💄 טיפול: ${appointment.service}\n\nנשמח שתבחרי מועד אחר שמתאים לך. אנחנו כאן כדי למצוא עבורך זמן מושלם 🤍`
     );
 
   return whatsappService.sendMessage(appointment.customerPhone, message);
@@ -153,7 +153,7 @@ exports.handleWahaWebhook = async (req, res) => {
       withWhatsAppFooter(
         approved
           ? `✅ בקשת התור ${requestCode} אושרה.\n${updated.customerName} קיבלה קישור לתשלום הערבון.`
-          : `❌ בקשת התור ${requestCode} נדחתה.\n${updated.customerName} קיבל הודעת דחייה.`
+          : `❌ בקשת התור ${requestCode} נדחתה.\n${updated.customerName} קיבלה הודעת דחייה.`
       )
     );
 

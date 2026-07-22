@@ -42,7 +42,7 @@ router.post('/request', async (req, res, next) => {
 
     const result = await whatsappService.sendMessage(
       phone,
-      withWhatsAppFooter(`קוד האימות שלך לקביעת תור ב-Sahar Beauty הוא: *${code}*\n\nהקוד תקף ל-10 דקות. אין להעביר אותו לאדם אחר.`)
+      withWhatsAppFooter(`היי יפה 🌸\n\nקוד האימות שלך לקביעת תור ב-Sahar Beauty הוא:\n\n*${code}*\n\nהקוד תקף ל-10 דקות ונועד עבורך בלבד. מיד לאחר האימות תוכלי להמשיך לבחירת התור שלך ✨`)
     );
 
     if (!result?.success) {
