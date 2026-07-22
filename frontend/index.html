@@ -23,6 +23,8 @@
     .feedback-status.success { color: #315c34; }
     .feedback-status.error { color: #8a3329; }
     .reviews-empty { grid-column: 1 / -1; padding: 45px; text-align: center; color: var(--muted); }
+    .contact-links .social-link { display: inline-flex; align-items: center; gap: 8px; padding: 8px 0; }
+    .contact-links .social-link svg { width: 21px; height: 21px; flex: 0 0 auto; }
     .booking-verification { display: grid; gap: 16px; }
     .verification-code-row { display: grid; grid-template-columns: 1fr auto; gap: 12px; }
     .verification-code-row button { width: auto; min-width: 135px; }
@@ -160,7 +162,11 @@
         <p class="eyebrow" data-i18n="feedbackEyebrow">החוויה שלך</p>
         <h2 data-i18n="feedbackTitle">נשמח לשמוע ממך</h2>
         <p data-i18n="feedbackText">שתפי אותנו בחוויה שלך. המשוב יופיע אוטומטית באזור המלצות הלקוחות.</p>
-        <div class="contact-links"><a href="https://wa.me/972503172506" target="_blank" rel="noopener">WhatsApp ↗</a><a href="https://www.instagram.com/11saharbeauty?igsh=Y3JnN3p3OHR2N3Nq" target="_blank" rel="noopener">Instagram ↗</a><a href="https://maps.google.com/?q=Sahar+Beauty" target="_blank" rel="noopener">Google Maps ↗</a></div>
+        <div class="contact-links">
+          <a class="social-link" href="https://wa.me/972538800769" target="_blank" rel="noopener" aria-label="WhatsApp"><svg viewBox="0 0 32 32" aria-hidden="true"><path fill="currentColor" d="M16 3a12.8 12.8 0 0 0-11 19.4L3.5 28l5.8-1.5A12.9 12.9 0 1 0 16 3Zm0 2.3a10.5 10.5 0 1 1-5.4 19.5l-.4-.2-3.4.9.9-3.3-.3-.5A10.5 10.5 0 0 1 16 5.3Zm-4.6 4.9c-.3 0-.7.1-1 .5-.4.4-1.3 1.3-1.3 3.1 0 1.8 1.3 3.6 1.5 3.8.2.3 2.6 4 6.4 5.5 3.1 1.2 3.8 1 4.5.9.7-.1 2.3-1 2.6-1.9.3-.9.3-1.7.2-1.9-.1-.2-.4-.3-.8-.5l-2.7-1.3c-.4-.2-.7-.3-1 .3l-1.2 1.5c-.2.3-.5.3-.9.1a8.6 8.6 0 0 1-2.6-1.6 9.7 9.7 0 0 1-1.8-2.3c-.2-.4 0-.6.2-.8l.6-.7.4-.7c.1-.3 0-.5 0-.7l-1.2-2.8c-.3-.7-.7-.7-.9-.7h-1Z"/></svg><span>WhatsApp</span></a>
+          <a class="social-link" href="https://www.instagram.com/11saharbeauty?igsh=Y3JnN3p3OHR2N3Nq" target="_blank" rel="noopener" aria-label="Instagram"><svg viewBox="0 0 24 24" aria-hidden="true"><path fill="none" stroke="currentColor" stroke-width="1.8" d="M7.4 2.8h9.2a4.6 4.6 0 0 1 4.6 4.6v9.2a4.6 4.6 0 0 1-4.6 4.6H7.4a4.6 4.6 0 0 1-4.6-4.6V7.4a4.6 4.6 0 0 1 4.6-4.6Z"/><circle cx="12" cy="12" r="4.2" fill="none" stroke="currentColor" stroke-width="1.8"/><circle cx="17.5" cy="6.6" r="1.1" fill="currentColor"/></svg><span>Instagram</span></a>
+          <a class="social-link" href="https://waze.com/ul/hsvbbm6j5p" target="_blank" rel="noopener" aria-label="Waze"><svg viewBox="0 0 24 24" aria-hidden="true"><path fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" d="M20.5 10.5a8.5 8.5 0 0 1-9 8.5H8l-3.5 2 .8-3.8A8.4 8.4 0 1 1 20.5 10.5Z"/><circle cx="9" cy="10" r=".8" fill="currentColor"/><circle cx="15" cy="10" r=".8" fill="currentColor"/><path d="M9 14c1.7 1.2 4.3 1.2 6 0" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/></svg><span>Waze</span></a>
+        </div>
       </div>
       <form class="contact-form reveal" id="feedbackForm">
         <input id="feedbackName" type="text" minlength="2" maxlength="60" data-i18n-placeholder="namePlaceholder" placeholder="השם שלך" required>
