@@ -26,7 +26,7 @@ async function approveAndRequestDeposit(appointment) {
   const frontendUrl = String(process.env.FRONTEND_URL || 'http://localhost:5500/frontend').replace(/\/+$/, '');
   const paymentLink = `${frontendUrl}/deposit.html?id=${encodeURIComponent(appointment._id)}&token=${encodeURIComponent(token)}`;
   const message = withWhatsAppFooter(
-    `היי ${appointment.customerName} אהובה 🌸\n\nיש לנו בשורה משמחת — Sahar Beauty אישרה את בקשת התור שלך ✨\n\nכדי לשמור את הזמן במיוחד עבורך ולאשר את התור סופית, נותר לשלם ערבון בסך *₪${appointment.depositAmount}* באמצעות Bit:\n\n${paymentLink}\n\nפרטי התור שלך:\n📅 ${formatJerusalemDate(new Date(appointment.date))}\n🕐 שעת הגעה: ${appointment.time}\n🏁 שעת סיום: ${addMinutesToTime(appointment.time, appointment.duration)}\n💄 ${appointment.service}\n\nלאחר קליטת התשלום נשלח לך אישור סופי. מחכות להעניק לך חוויה יפה ומפנקת 🤍`
+    `היי ${appointment.customerName} 🌸\nהתור אושר וממתין לתשלום ערבון.\n\n💳 ערבון: ₪${appointment.depositAmount}\n🔗 לתשלום: ${paymentLink}\n\n📅 ${formatJerusalemDate(new Date(appointment.date))}\n🕐 ${appointment.time}–${addMinutesToTime(appointment.time, appointment.duration)}\n💄 ${appointment.service}\n\nהתור יאושר סופית לאחר התשלום.`
   );
   const result = await whatsappService.sendMessage(appointment.customerPhone, message);
   return { appointment, paymentLink, whatsappSent: result?.success === true };

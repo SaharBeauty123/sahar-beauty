@@ -1,6 +1,6 @@
 const Appointment = require('../models/Appointment');
 const whatsappService = require('../services/whatsappService');
-const { withWhatsAppFooter } = require('../utils/whatsappMessage');
+const { WAZE_URL, withWhatsAppFooter } = require('../utils/whatsappMessage');
 const { formatJerusalemDate } = require('../utils/timeZone');
 const { approveAndRequestDeposit } = require('../services/depositApprovalService');
 
@@ -76,7 +76,7 @@ function isOwner(sender) {
 async function notifyClient(appointment, approved) {
   const message = approved
     ? withWhatsAppFooter(
-      `היי ${appointment.customerName} אהובה 🌸\n\nבשמחה רבה, התור שלך ב-Sahar Beauty אושר ✨\n\n📅 תאריך: ${formatJerusalemDate(new Date(appointment.date))}\n🕐 שעת הגעה: ${appointment.time}\n🏁 שעת סיום: ${addMinutesToTime(appointment.time, appointment.duration)}\n💄 טיפול: ${appointment.service}\n⏳ משך הטיפול: ${appointment.duration} דקות\n\nמחכות לפנק אותך ולהכין אותך לרגע המיוחד שלך 🤍`
+      `היי ${appointment.customerName} 🌸\nהתור שלך אושר סופית ✅\n\n📅 ${formatJerusalemDate(new Date(appointment.date))}\n🕐 ${appointment.time}–${addMinutesToTime(appointment.time, appointment.duration)}\n💄 ${appointment.service}\n\n📍 Waze: ${WAZE_URL}\n\nמחכות לך 🤎`
     )
     : withWhatsAppFooter(
       `היי ${appointment.customerName} אהובה 🌸\n\nלצערנו לא נוכל לאשר את בקשת התור במועד שבחרת.\n\n📅 תאריך: ${formatJerusalemDate(new Date(appointment.date))}\n🕐 שעת הגעה: ${appointment.time}\n🏁 שעת סיום: ${addMinutesToTime(appointment.time, appointment.duration)}\n💄 טיפול: ${appointment.service}\n\nנשמח שתבחרי מועד אחר שמתאים לך. אנחנו כאן כדי למצוא עבורך זמן מושלם 🤍`

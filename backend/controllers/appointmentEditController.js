@@ -1,7 +1,7 @@
 const Appointment = require('../models/Appointment');
 const Service = require('../models/Service');
 const whatsappService = require('../services/whatsappService');
-const { withWhatsAppFooter } = require('../utils/whatsappMessage');
+const { WAZE_URL, withWhatsAppFooter } = require('../utils/whatsappMessage');
 const { approveAndRequestDeposit } = require('../services/depositApprovalService');
 const {
   jerusalemDateTimeToUtc,
@@ -81,7 +81,13 @@ function buildClientUpdateMessage(appointment, changes, previousStatus) {
 
   if (previousStatus === 'pending' && appointment.status === 'confirmed') {
     return withWhatsAppFooter(
-      `היי ${appointment.customerName} אהובה 🌸\n\nבשמחה רבה, בקשת התור שלך ב-Sahar Beauty אושרה ✨\n\n📅 תאריך: ${formatJerusalemDate(new Date(appointment.date))}\n🕐 שעת הגעה: ${appointment.time}\n🏁 שעת סיום: ${addMinutesToTime(appointment.time, appointment.duration)}\n💄 טיפול: ${appointment.service}\n⏳ משך הטיפול: ${appointment.duration} דקות${noteSection}\n\nהזמן הזה שמור במיוחד עבורך. מחכות לך באהבה 🤍`
+      `היי ${appointment.customerName} 🌸\nהתור שלך אושר סופית ✅\n\n📅 ${formatJerusalemDate(new Date(appointment.date))}\n🕐 ${appointment.time}–${addMinutesToTime(appointment.time, appointment.duration)}\n💄 ${appointment.service}${noteSection}\n\n📍 Waze: ${WAZE_URL}\n\nמחכות לך 🤎`
+    );
+  }
+
+  if (appointment.status === 'confirmed') {
+    return withWhatsAppFooter(
+      `היי ${appointment.customerName} 🌸\nהתור שלך אושר סופית ✅\n\n📅 ${formatJerusalemDate(new Date(appointment.date))}\n🕐 ${appointment.time}–${addMinutesToTime(appointment.time, appointment.duration)}\n💄 ${appointment.service}${noteSection}\n\n📍 Waze: ${WAZE_URL}\n\nמחכות לך 🤎`
     );
   }
 
