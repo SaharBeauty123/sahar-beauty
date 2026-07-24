@@ -7,7 +7,7 @@ const {
   formatJerusalemDate
 } = require('../utils/timeZone');
 
-const OWNER_WHATSAPP_PHONE = process.env.OWNER_WHATSAPP_PHONE || '0503172506';
+const OWNER_REMINDER_PHONE = '972538800769';
 
 class CronService {
   constructor() {
@@ -137,7 +137,7 @@ class CronService {
     );
 
     try {
-      const result = await whatsappService.sendMessage(OWNER_WHATSAPP_PHONE, message);
+      const result = await whatsappService.sendMessage(OWNER_REMINDER_PHONE, message);
 
       await Appointment.updateOne(
         { _id: appointment._id, ownerReminderSent: { $ne: true } },
