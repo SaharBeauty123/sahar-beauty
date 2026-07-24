@@ -13,8 +13,10 @@ const {
   getAppointmentInstant
 } = require('../utils/timeZone');
 
-const OWNER_WHATSAPP_PHONE = process.env.OWNER_WHATSAPP_PHONE || '0503172506';
+const OWNER_WHATSAPP_PHONE = process.env.OWNER_WHATSAPP_PHONE || '0538800769';
 const JWT_SECRET = process.env.JWT_SECRET || 'supersecretkey';
+const BANK_TRANSFER_DETAILS = process.env.BANK_TRANSFER_DETAILS
+  || 'בנק: 00\nסניף: 000\nחשבון: 000000\nשם בעלת החשבון: Sahar Beauty';
 
 function getDayKey(dateString) {
   const dayMap = [
@@ -297,11 +299,11 @@ exports.createAppointment = async (req, res) => {
   }
 };
 
-exports.confirmDemoDeposit = async (req, res) => {
+exports.selectDepositMethod = async (req, res) => {
   try {
     const method = String(req.body.method || '');
 
-    if (method !== 'bit') {
+    if (!['bit', 'bank-transfer', 'cash'].includes(method)) {
       return res.status(400).json({
         success: false,
         error: 'אמצעי התשלום אינו נתמך'
@@ -313,39 +315,40 @@ exports.confirmDemoDeposit = async (req, res) => {
       {
         _id: req.params.id,
         status: 'awaiting-deposit',
-        depositStatus: 'unpaid',
         depositPaymentTokenHash: tokenHash
       },
       { $set: {
-        status: 'confirmed',
-        depositStatus: 'paid',
+        depositStatus: method === 'cash' ? 'cash-coordination' : 'proof-pending',
         depositMethod: method,
-        depositPaidAt: new Date(),
-        depositPaymentTokenHash: null
       } },
       { new: true, runValidators: true }
     ).select('+depositPaymentTokenHash');
 
     if (!appointment) {
-      return res.status(400).json({ success: false, error: 'קישור התשלום אינו תקין, כבר שולם או שהתור טרם אושר' });
+      return res.status(400).json({ success: false, error: 'קישור התשלום אינו תקין או שהתור טרם אושר' });
     }
 
-    res.json({
+    if (method === 'bank-transfer') {
+      const bankMessage = withWhatsAppFooter(
+        `היי ${appointment.customerName} 🌸\nאלו פרטי חשבון הבנק להעברת הערבון בסך ₪${appointment.depositAmount}:\n\n${BANK_TRANSFER_DETAILS}\n\nלאחר ההעברה, צלמי מסך ושלחי את האסמכתא ל-WhatsApp של Sahar Beauty.\nהתור יאושר סופית לאחר בדיקת האסמכתא.`
+      );
+      await sendAndTrack(appointment.customerPhone, bankMessage);
+    }
+
+    return res.json({
       success: true,
-      message: 'הערבון נקלט והתור אושר',
-      data: appointment
-    });
-
-    const confirmationMessage = withWhatsAppFooter(
-      `היי ${appointment.customerName} 🌸\nהתור שלך אושר סופית ✅\n\n📅 ${formatJerusalemDate(new Date(appointment.date))}\n🕐 ${appointment.time}–${addMinutesToTime(appointment.time, appointment.duration)}\n💄 ${appointment.service}\n\n📍 Waze: ${WAZE_URL}\n\nמחכות לך 🤎`
-    );
-
-    sendAndTrack(appointment.customerPhone, confirmationMessage).catch((error) => {
-      console.error('❌ Deposit confirmation WhatsApp failed:', error.message);
+      message: method === 'bank-transfer'
+        ? 'פרטי חשבון הבנק נשלחים אלייך ב-WhatsApp'
+        : 'אמצעי התשלום נשמר. התור ממתין לבדיקת התשלום.',
+      data: {
+        status: appointment.status,
+        depositStatus: appointment.depositStatus,
+        depositMethod: appointment.depositMethod
+      }
     });
   } catch (error) {
-    console.error('שגיאה באישור הערבון:', error);
-    res.status(500).json({ success: false, error: 'שגיאה באישור הערבון' });
+    console.error('שגיאה בבחירת אמצעי תשלום:', error);
+    res.status(500).json({ success: false, error: 'שגיאה בבחירת אמצעי התשלום' });
   }
 };
 
@@ -354,7 +357,6 @@ exports.getDepositPaymentDetails = async (req, res) => {
     const appointment = await Appointment.findOne({
       _id: req.params.id,
       status: 'awaiting-deposit',
-      depositStatus: 'unpaid',
       depositPaymentTokenHash: hashToken(req.query.token || '')
     }).select('+depositPaymentTokenHash');
 

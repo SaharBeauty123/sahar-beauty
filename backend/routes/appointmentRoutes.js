@@ -10,7 +10,7 @@ const {
 
 const {
   createAppointment,
-  confirmDemoDeposit,
+  selectDepositMethod,
   getDepositPaymentDetails
 } = require("../controllers/bookingController");
 
@@ -23,7 +23,7 @@ const {
 } = require("../controllers/appointmentEditController");
 
 router.post("/", createAppointment);
-router.post("/:id/deposit/confirm", confirmDemoDeposit);
+router.post("/:id/deposit/method", selectDepositMethod);
 router.get("/payment/:id", getDepositPaymentDetails);
 router.get("/available/:date", getAvailableSlots);
 

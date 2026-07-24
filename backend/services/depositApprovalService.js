@@ -26,7 +26,7 @@ async function approveAndRequestDeposit(appointment) {
   const frontendUrl = String(process.env.FRONTEND_URL || 'http://localhost:5500/frontend').replace(/\/+$/, '');
   const paymentLink = `${frontendUrl}/deposit.html?id=${encodeURIComponent(appointment._id)}&token=${encodeURIComponent(token)}`;
   const message = withWhatsAppFooter(
-    `היי ${appointment.customerName} 🌸\nהתור אושר וממתין לתשלום ערבון.\n\n💳 ערבון: ₪${appointment.depositAmount}\n🔗 לתשלום: ${paymentLink}\n\n📅 ${formatJerusalemDate(new Date(appointment.date))}\n🕐 ${appointment.time}–${addMinutesToTime(appointment.time, appointment.duration)}\n💄 ${appointment.service}\n\nהתור יאושר סופית לאחר התשלום.`
+    `היי ${appointment.customerName} 🌸\nהתור אושר וממתין לתשלום ערבון.\n\n💳 ערבון: ₪${appointment.depositAmount}\n🔗 לתשלום: ${paymentLink}\n\n📅 ${formatJerusalemDate(new Date(appointment.date))}\n🕐 ${appointment.time}–${addMinutesToTime(appointment.time, appointment.duration)}\n💄 ${appointment.service}\n\nבתשלום ב-Bit או בהעברה בנקאית, יש לצלם מסך ולשלוח את האסמכתא ל-Sahar Beauty.\nהתור יאושר סופית לאחר בדיקת התשלום.`
   );
   const result = await whatsappService.sendMessage(appointment.customerPhone, message);
   return { appointment, paymentLink, whatsappSent: result?.success === true };

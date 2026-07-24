@@ -44,13 +44,13 @@ const appointmentSchema = new mongoose.Schema({
 
   depositStatus: {
     type: String,
-    enum: ['unpaid', 'paid', 'cash-coordination'],
+    enum: ['unpaid', 'proof-pending', 'paid', 'cash-coordination'],
     default: 'unpaid'
   },
 
   depositMethod: {
     type: String,
-    enum: ['bit', 'cash', null],
+    enum: ['bit', 'bank-transfer', 'cash', null],
     default: null
   },
 
