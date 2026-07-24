@@ -156,10 +156,6 @@ exports.updateAppointment = async (req, res) => {
       return res.status(400).json({ success: false, error: 'סטטוס לא תקין' });
     }
 
-    if (appointment.status === 'awaiting-deposit' && status === 'confirmed' && appointment.depositStatus !== 'paid') {
-      return res.status(400).json({ success: false, error: 'לא ניתן לאשר סופית לפני קליטת תשלום הערבון' });
-    }
-
     if (!Number.isFinite(duration) || duration < 5 || duration > 480) {
       return res.status(400).json({ success: false, error: 'משך התור חייב להיות בין 5 ל-480 דקות' });
     }
