@@ -26,6 +26,33 @@
     #paymentMessage { display: none; margin-top: 18px; padding: 14px; border-radius: 12px; }
     #paymentMessage.success { display: block; border: 1px solid #8dc89d; background: #effbf2; color: #217a38; }
     #paymentMessage.error { display: block; border: 1px solid #ecaaaa; background: #fff1f1; color: #a52a2a; }
+    #paymentMessage.bank-toast {
+      position: fixed;
+      z-index: 1000;
+      inset: 50% auto auto 50%;
+      display: block;
+      width: min(88vw, 440px);
+      margin: 0;
+      padding: 22px 26px;
+      border: 1px solid rgba(122, 90, 70, .24);
+      border-radius: 14px;
+      background: rgba(253, 249, 245, .98);
+      box-shadow: 0 24px 70px rgba(74, 52, 40, .2);
+      color: var(--espresso);
+      font: 600 16px/1.6 var(--sans);
+      text-align: center;
+      transform: translate(-50%, -50%);
+      animation: bankToastIn .25s ease both;
+    }
+    #paymentMessage.bank-toast.hiding { animation: bankToastOut .25s ease both; }
+    @keyframes bankToastIn {
+      from { opacity: 0; transform: translate(-50%, calc(-50% + 14px)) scale(.97); }
+      to { opacity: 1; transform: translate(-50%, -50%) scale(1); }
+    }
+    @keyframes bankToastOut {
+      from { opacity: 1; transform: translate(-50%, -50%) scale(1); }
+      to { opacity: 0; transform: translate(-50%, calc(-50% - 10px)) scale(.98); }
+    }
     @media (max-width: 680px) { .deposit-page { padding-top: 135px; } .deposit-page .container { padding-top: 35px; } }
   </style>
 </head>
@@ -96,6 +123,7 @@
     const OWNER_WHATSAPP = '972538800769';
     const BIT_APP_LINK = 'https://www.bitpay.co.il/app';
     let depositAmountValue = 0;
+    let paymentMessageTimer;
     const depositTranslations = {
       he: {navAbout:'אודות',navPortfolio:'גלריה',navReviews:'המלצות',navContact:'יצירת קשר',bookNow:'קבעי תור',depositTitle:'תשלום ערבון 🌸',depositIntro:'בחרי אמצעי תשלום. התור יאושר לאחר בדיקת התשלום.',depositAmount:'סכום הערבון',bitTitle:'🟢 תשלום באמצעות Bit',bitText:'שלמי את סכום הערבון ב-Bit למספר הבא:',bitButton:'פתיחת Bit לתשלום',bankTitle:'🏦 העברה בנקאית',bankText:'פרטי חשבון הבנק נשלחים אלייך ב-WhatsApp.',bankButton:'שליחת פרטי הבנק ב-WhatsApp',cashTitle:'💵 תשלום במזומן',cashText:'לתיאום תשלום הערבון במזומן מול Sahar Beauty.',cashButton:'פתיחת שיחת WhatsApp',proofText:'לאחר התשלום, צלמי מסך ושלחי את האסמכתא ב-WhatsApp.',sendProof:'שליחת צילום מסך ב-WhatsApp'},
       ar: {navAbout:'من أنا',navPortfolio:'الأعمال',navReviews:'آراء العميلات',navContact:'تواصل',bookNow:'احجزي الآن',depositTitle:'دفع العربون 🌸',depositIntro:'اختاري طريقة الدفع. سيتم تأكيد الموعد بعد فحص الدفعة.',depositAmount:'قيمة العربون',bitTitle:'🟢 الدفع بواسطة Bit',bitText:'ادفعي مبلغ العربون عبر Bit إلى الرقم:',bitButton:'فتح Bit للدفع',bankTitle:'🏦 تحويل بنكي',bankText:'سيتم إرسال تفاصيل الحساب البنكي إليك عبر WhatsApp.',bankButton:'إرسال تفاصيل البنك عبر WhatsApp',cashTitle:'💵 الدفع نقداً',cashText:'للتنسيق على دفع العربون نقداً مع Sahar Beauty.',cashButton:'فتح محادثة WhatsApp',proofText:'بعد الدفع، التقطي صورة للشاشة وأرسلي إثبات الدفع عبر WhatsApp.',sendProof:'إرسال صورة الإثبات عبر WhatsApp'},
@@ -174,7 +202,7 @@
     async function requestBankDetails() {
       try {
         const result = await choosePaymentMethod('bank-transfer');
-        showPaymentMessage(result.message || 'פרטי חשבון הבנק נשלחים אלייך ב-WhatsApp', 'success');
+        showBankToast(result.message || 'פרטי חשבון הבנק נשלחים אלייך ב-WhatsApp');
       } catch (error) {
         showPaymentMessage(error.message || 'שגיאה בשליחת פרטי הבנק', 'error');
       }
@@ -196,9 +224,25 @@
     }
 
     function showPaymentMessage(text, type) {
+      clearTimeout(paymentMessageTimer);
       const box = document.getElementById('paymentMessage');
       box.textContent = text;
       box.className = type;
+    }
+
+    function showBankToast(text) {
+      clearTimeout(paymentMessageTimer);
+      const box = document.getElementById('paymentMessage');
+      box.textContent = text;
+      box.className = 'bank-toast';
+
+      paymentMessageTimer = setTimeout(() => {
+        box.classList.add('hiding');
+        setTimeout(() => {
+          box.className = '';
+          box.textContent = '';
+        }, 250);
+      }, 1750);
     }
   </script>
 </body>
