@@ -208,7 +208,7 @@ button:hover{
 </div>
 
 <script>
-const API_URL = "http://localhost:5001/api";
+const API_URL = ['localhost','127.0.0.1'].includes(window.location.hostname)?'http://localhost:5001/api':'/api';
 
 async function login(){
   const username=document.getElementById("username").value.trim();

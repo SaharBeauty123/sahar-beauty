@@ -4,7 +4,7 @@ const { WAZE_URL, withWhatsAppFooter } = require('../utils/whatsappMessage');
 const { formatJerusalemDate } = require('../utils/timeZone');
 const { approveAndRequestDeposit } = require('../services/depositApprovalService');
 
-const OWNER_WHATSAPP_PHONE = process.env.OWNER_WHATSAPP_PHONE || '0503172506';
+const OWNER_WHATSAPP_PHONE = process.env.OWNER_WHATSAPP_PHONE || '0538800769';
 
 function addMinutesToTime(time, minutesToAdd) {
   const [hours, minutes] = String(time).split(':').map(Number);

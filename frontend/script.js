@@ -1,5 +1,7 @@
 // ✅ تم التحديث ليرتبط بسيرفر Railway الجديد 24/7
-const API_URL = "http://localhost:5001/api";
+const API_URL = ['localhost', '127.0.0.1'].includes(window.location.hostname)
+  ? 'http://localhost:5001/api'
+  : '/api';
 
 /* ===============================
    DOM ELEMENTS

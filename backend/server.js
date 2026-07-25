@@ -26,7 +26,18 @@ const app = express();
    MIDDLEWARE
 ======================== */
 app.use(cors({
-  origin: process.env.FRONTEND_URL || '*',
+  origin(origin, callback) {
+    const allowedOrigins = String(process.env.FRONTEND_URL || '')
+      .split(',')
+      .map((value) => value.trim().replace(/\/+$/, ''))
+      .filter(Boolean);
+
+    if (!origin || allowedOrigins.length === 0 || allowedOrigins.includes(origin.replace(/\/+$/, ''))) {
+      return callback(null, true);
+    }
+
+    return callback(new Error('Origin is not allowed by CORS'));
+  },
   methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
   allowedHeaders: ['Content-Type', 'Authorization'],
   credentials: true

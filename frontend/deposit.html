@@ -90,7 +90,9 @@
   </div>
 
   <script>
-    const API_URL = 'http://localhost:5001/api';
+    const API_URL = ['localhost', '127.0.0.1'].includes(window.location.hostname)
+      ? 'http://localhost:5001/api'
+      : '/api';
     const OWNER_WHATSAPP = '972538800769';
     const BIT_APP_LINK = 'https://www.bitpay.co.il/app';
     let depositAmountValue = 0;
