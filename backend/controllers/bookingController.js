@@ -17,7 +17,7 @@ const OWNER_WHATSAPP_PHONE = process.env.OWNER_WHATSAPP_PHONE || '0527881172';
 const JWT_SECRET = process.env.JWT_SECRET
   || (process.env.NODE_ENV === 'production' ? '' : 'development-only-secret');
 const BANK_TRANSFER_DETAILS = process.env.BANK_TRANSFER_DETAILS
-  || 'בנק: 00\nסניף: 000\nחשבון: 000000\nשם בעלת החשבון: Sahar Beauty';
+  || 'פרטי חשבון הבנק טרם הוגדרו';
 
 function getDayKey(dateString) {
   const dayMap = [
