@@ -13,7 +13,7 @@ const {
   getAppointmentInstant
 } = require('../utils/timeZone');
 
-const OWNER_WHATSAPP_PHONE = process.env.OWNER_WHATSAPP_PHONE || '0538800769';
+const OWNER_WHATSAPP_PHONE = process.env.OWNER_WHATSAPP_PHONE || '0527881172';
 const JWT_SECRET = process.env.JWT_SECRET
   || (process.env.NODE_ENV === 'production' ? '' : 'development-only-secret');
 const BANK_TRANSFER_DETAILS = process.env.BANK_TRANSFER_DETAILS

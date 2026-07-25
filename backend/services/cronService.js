@@ -7,7 +7,7 @@ const {
   formatJerusalemDate
 } = require('../utils/timeZone');
 
-const OWNER_REMINDER_PHONE = '972538800769';
+const OWNER_REMINDER_PHONE = process.env.OWNER_WHATSAPP_PHONE || '0527881172';
 
 class CronService {
   constructor() {
