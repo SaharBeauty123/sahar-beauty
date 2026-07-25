@@ -3,6 +3,7 @@ const HOP_BY_HOP_HEADERS = new Set([
   'content-encoding',
   'content-length',
   'host',
+  'origin',
   'transfer-encoding'
 ]);
 
