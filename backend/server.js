@@ -118,7 +118,6 @@ async function ensureSettings() {
 
     if (!exists) {
       await BusinessSettings.create({
-        depositPercentage: 20,
         workingHours: {
           sunday: { start: '09:00', end: '19:00', breaks: [], enabled: true },
           monday: { start: '09:00', end: '19:00', breaks: [], enabled: true },

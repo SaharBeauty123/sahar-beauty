@@ -13,6 +13,12 @@ const serviceSchema = new mongoose.Schema({
     type: Number,  // בדקות
     required: true,
     default: 30
+  },
+  depositAmount: {
+    type: Number,
+    required: true,
+    min: 0,
+    default: 0
   }
 }, { timestamps: true });
 

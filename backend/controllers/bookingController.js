@@ -149,11 +149,7 @@ exports.createAppointment = async (req, res) => {
 
     const settings = await BusinessSettings.findOne();
     const daySettings = settings?.workingHours?.[getDayKey(date)];
-    const depositPercentage = Number(settings?.depositPercentage ?? 20);
-    const depositAmount = Math.max(
-      0,
-      Math.round((Number(serviceDoc.price) || 0) * depositPercentage / 100)
-    );
+    const depositAmount = Math.max(0, Number(serviceDoc.depositAmount) || 0);
 
     if (!daySettings || !daySettings.enabled) {
       return res.status(400).json({
