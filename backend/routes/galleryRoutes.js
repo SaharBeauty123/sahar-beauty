@@ -4,6 +4,7 @@ const galleryController = require("../controllers/galleryController");
 const { protect } = require("../middleware/authMiddleware");
 
 router.get("/", galleryController.getImages);
+router.get("/:id/image", galleryController.getImage);
 
 router.post(
   "/",

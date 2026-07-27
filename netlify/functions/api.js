@@ -65,10 +65,16 @@ exports.handler = async (event) => {
       }
     });
 
+    const contentType = String(response.headers.get('content-type') || '').toLowerCase();
+    const isBinary = contentType.startsWith('image/');
+
     return {
       statusCode: response.status,
       headers: responseHeaders,
-      body: await response.text()
+      body: isBinary
+        ? Buffer.from(await response.arrayBuffer()).toString('base64')
+        : await response.text(),
+      isBase64Encoded: isBinary
     };
   } catch (error) {
     return {
