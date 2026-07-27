@@ -53,19 +53,21 @@ exports.getImages = async (req, res) => {
 exports.getImage = async (req, res) => {
   try {
     const image = await Gallery.findById(req.params.id)
-      .select("image contentType")
-      .lean();
+      .select("image contentType");
 
     if (!image) {
       return res.status(404).json({ error: "Image not found" });
     }
 
+    const imageBuffer = Buffer.isBuffer(image.image)
+      ? image.image
+      : Buffer.from(image.image.buffer || image.image);
+
     res.set({
       "Content-Type": image.contentType,
-      "Content-Length": image.image.length,
       "Cache-Control": "public, max-age=86400"
     });
-    return res.send(image.image);
+    return res.send(imageBuffer);
   } catch (error) {
     if (error.name === "CastError") {
       return res.status(404).json({ error: "Image not found" });
