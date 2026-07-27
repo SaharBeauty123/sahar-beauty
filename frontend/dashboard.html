@@ -46,9 +46,38 @@ table{width:100%;border-collapse:collapse;font-size:14px;background:#fff}th,td{p
 <body>
 <header><h1>✿ Beauty Dashboard</h1><button class="logout" onclick="logout()">Logout</button></header>
 <div class="container">
-<section><h2>שעות פעילות</h2><div id="workingHoursContainer"></div><button onclick="saveWorkingHours()">שמור שינויים</button></section>
-<section><h2>שירותים</h2><div class="form-grid"><div class="form-field"><label>שם שירות</label><input id="serviceNameInput"></div><div class="form-field"><label>מחיר</label><input id="servicePriceInput" type="number"></div><div class="form-field"><label>ערבון</label><input id="serviceDepositInput" type="number"></div><div class="form-field"><label>משך (דקות)</label><input id="serviceDurationInput" type="number"></div><button onclick="addService()">הוסף שירות</button></div><div class="table-wrap"><table id="servicesTable"><thead><tr><th>שם</th><th>מחיר</th><th>ערבון</th><th>משך</th><th>פעולות</th></tr></thead><tbody></tbody></table></div></section>
-<section><h2>➕ קביעת תור ידנית</h2><div class="form-grid"><div class="form-field"><label>שם לקוח</label><input id="manualName" placeholder="שם מלא"></div><div class="form-field"><label>טלפון</label><input id="manualPhone" placeholder="05xxxxxxxx"></div><div class="form-field"><label>שירות</label><select id="manualService"></select></div><div class="form-field"><label>תאריך</label><input id="manualDate" type="date"></div><div class="form-field"><label>שעה</label><input id="manualTime" type="time"></div><button onclick="pickContact()">בחר מ-Contacts</button><button onclick="createManualAppointment()">צור תור</button></div><div id="manualMessage" class="message"></div></section>
+<section>
+<h2>שעות פעילות</h2>
+<div id="workingHoursContainer"></div>
+<button onclick="saveWorkingHours()">שמור שינויים</button>
+</section>
+
+<section>
+<h2>שירותים</h2>
+<div class="form-grid">
+<div class="form-field"><label>שם שירות</label><input id="serviceNameInput"></div>
+<div class="form-field"><label>מחיר</label><input id="servicePriceInput" type="number"></div>
+<div class="form-field"><label>ערבון</label><input id="serviceDepositInput" type="number"></div>
+<div class="form-field"><label>משך (דקות)</label><input id="serviceDurationInput" type="number"></div>
+<button onclick="addService()">הוסף שירות</button>
+</div>
+<div class="table-wrap"><table id="servicesTable"><thead><tr><th>שם</th><th>מחיר</th><th>ערבון</th><th>משך</th><th>פעולות</th></tr></thead><tbody></tbody></table></div>
+</section>
+
+<section>
+<h2>➕ קביעת תור ידנית</h2>
+<div class="form-grid">
+<div class="form-field"><label>שם לקוח</label><input id="manualName" placeholder="שם מלא"></div>
+<div class="form-field"><label>טלפון</label><input id="manualPhone" placeholder="05xxxxxxxx"></div>
+<div class="form-field"><label>שירות</label><select id="manualService"></select></div>
+<div class="form-field"><label>תאריך</label><input id="manualDate" type="date"></div>
+<div class="form-field"><label>שעה</label><input id="manualTime" type="time"></div>
+<button onclick="pickContact()">בחר מ-Contacts</button>
+<button onclick="createManualAppointment()">צור תור</button>
+</div>
+<div id="manualMessage" class="message"></div>
+</section>
+
 <section>
 <h2>תורים</h2>
 <div class="appointment-filter">
@@ -59,6 +88,7 @@ table{width:100%;border-collapse:collapse;font-size:14px;background:#fff}th,td{p
 </div>
 <div class="table-wrap"><table id="appointmentsTable"><thead><tr><th>שם</th><th>טלפון</th><th>שירות</th><th>משך</th><th>תאריך</th><th>שעת הגעה</th><th>שעת סיום</th><th>סטטוס</th><th>פעולות</th></tr></thead><tbody></tbody></table></div>
 </section>
+
 <section class="gallery-upload">
 <h2>גלריה</h2>
 <div class="form-grid">
@@ -69,42 +99,598 @@ table{width:100%;border-collapse:collapse;font-size:14px;background:#fff}th,td{p
 <div id="galleryContainer"></div>
 </section>
 </div>
-<div id="editModal" class="modal"><div class="modal-card"><h2>✏️ עריכת תור</h2><input type="hidden" id="editId"><div class="form-grid"><div class="form-field"><label>שם לקוח</label><input id="editName"></div><div class="form-field"><label>טלפון</label><input id="editPhone"></div><div class="form-field"><label>שירות</label><select id="editService"></select></div><div class="form-field"><label>תאריך</label><input id="editDate" type="date"></div><div class="form-field"><label>שעה</label><input id="editTime" type="time"></div></div><div style="text-align:center"><button onclick="saveAppointmentEdit()">שמור</button><button class="secondary-btn" onclick="closeEditModal()">ביטול</button></div></div></div>
+
+<div id="editModal" class="modal">
+<div class="modal-card">
+<h2>✏️ עריכת תור</h2>
+<input type="hidden" id="editId">
+<div class="form-grid">
+<div class="form-field"><label>שם לקוח</label><input id="editName"></div>
+<div class="form-field"><label>טלפון</label><input id="editPhone"></div>
+<div class="form-field"><label>שירות</label><select id="editService"></select></div>
+<div class="form-field"><label>תאריך</label><input id="editDate" type="date"></div>
+<div class="form-field"><label>שעה</label><input id="editTime" type="time"></div>
+</div>
+<div style="text-align:center">
+<button onclick="saveAppointmentEdit()">שמור</button>
+<button class="secondary-btn" onclick="closeEditModal()">ביטול</button>
+</div>
+</div>
+</div>
+
 <script>
-const API_URL=['localhost','127.0.0.1'].includes(window.location.hostname)?'http://localhost:5001/api':'/api';
-const token=localStorage.getItem('token');if(!token)location.href='admin.html';
-let servicesCache=[];let appointmentsCache=[];
-document.addEventListener('DOMContentLoaded',()=>{loadServices();loadAppointments();loadGallery();loadWorkingHours();manualDate.min=new Date().toISOString().split('T')[0];appointmentDateFilter.addEventListener('change',filterAppointmentsByDate)});
-async function loadWorkingHours(){const r=await fetch(`${API_URL}/settings`),d=await r.json(),c=workingHoursContainer;c.innerHTML='';const n={sunday:'ראשון',monday:'שני',tuesday:'שלישי',wednesday:'רביעי',thursday:'חמישי',friday:'שישי',saturday:'שבת'};Object.keys(n).forEach(day=>{const s=d.workingHours?.[day]||{};c.innerHTML+=`<div style="margin-bottom:12px;padding:12px;background:#f9f5f1;border-radius:8px"><label style="font-weight:600">${n[day]}</label><div style="margin-top:8px"><input type="time" id="${day}_start" value="${s.start||'09:00'}" style="width:100px"> עד <input type="time" id="${day}_end" value="${s.end||'18:00'}" style="width:100px"><label style="margin-inline-start:10px"><input type="checkbox" id="${day}_enabled" ${s.enabled!==false?'checked':''}> פעיל</label><button class="secondary-btn" style="font-size:12px;padding:6px" onclick="addBreak('${day}')">+ הפסקה</button></div><div id="${day}_breaks" style="margin-top:8px"></div>${s.breaks?.map((b,i)=>`<div><input type="time" value="${b.start}" id="${day}_breakStart_${i}"> - <input type="time" value="${b.end}" id="${day}_breakEnd_${i}"></div>`).join('')}</div>`})};
-async function saveWorkingHours(){const out={};for(const day of ['sunday','monday','tuesday','wednesday','thursday','friday','saturday']){const breaks=[];document.querySelectorAll(`[id^="${day}_breakStart"]`).forEach((el,i)=>{const s=el.value,e=document.getElementById(`${day}_breakEnd_${i}`).value;if(s&&e)breaks.push({start:s,end:e})});out[day]={start:document.getElementById(`${day}_start`).value,end:document.getElementById(`${day}_end`).value,breaks,enabled:document.getElementById(`${day}_enabled`).checked}}try{const r=await fetch(`${API_URL}/settings`,{method:'PUT',headers:{'Content-Type':'application/json','Authorization':`Bearer ${token}`},body:JSON.stringify({workingHours:out})});if(r.ok)alert('שעות עודכנו בהצלחה!')}catch(e){console.error(e)}};
-function addBreak(day){const c=document.getElementById(`${day}_breaks`),i=Date.now();c.insertAdjacentHTML('beforeend',`<div><input type="time" id="${day}_breakStart_${i}"> - <input type="time" id="${day}_breakEnd_${i}"></div>`)};
-async function loadServices(){const r=await fetch(`${API_URL}/services`);servicesCache=await r.json();const t=document.querySelector('#servicesTable tbody');t.innerHTML='';manualService.innerHTML='<option value="">בחר שירות</option>';servicesCache.forEach(s=>{t.innerHTML+=`<tr><td>${s.name}</td><td>${s.price}</td><td>${s.depositAmount}</td><td>${s.duration}</td><td><button class="delete-btn" onclick="deleteService('${s._id}')">מחק</button></td></tr>`;const opt=document.createElement('option');opt.value=s.name;opt.textContent=s.name;manualService.appendChild(opt);const opt2=document.createElement('option');opt2.value=s.name;opt2.textContent=s.name;editService.appendChild(opt2)})};
-async function addService(){const p={name:serviceNameInput.value.trim(),price:Number(servicePriceInput.value),depositAmount:Number(serviceDepositInput.value),duration:Number(serviceDurationInput.value)};if(!p.name)return alert('שם שירות חובה');const r=await fetch(`${API_URL}/services`,{method:'POST',headers:{'Content-Type':'application/json','Authorization':`Bearer ${token}`},body:JSON.stringify(p)});if(r.ok){serviceNameInput.value='';servicePriceInput.value='';serviceDepositInput.value='';serviceDurationInput.value='';loadServices()}else alert('שגיאה בהוספת שירות')};
-async function deleteService(id){if(!confirm('למחוק שירות?'))return;await fetch(`${API_URL}/services/${id}`,{method:'DELETE',headers:{'Authorization':`Bearer ${token}`}});loadServices()};
-async function updateService(id){const p={price:Number(document.getElementById(`price_${id}`).value),depositAmount:Number(document.getElementById(`deposit_${id}`).value),duration:Number(document.getElementById(`duration_${id}`).value)};const r=await fetch(`${API_URL}/services/${id}`,{method:'PUT',headers:{'Content-Type':'application/json','Authorization':`Bearer ${token}`},body:JSON.stringify(p)});if(r.ok)loadServices();else alert('שגיאה בעדכון')};
-async function pickContact(){try{const l=await navigator.contacts.select(['name','tel'],{multiple:false});if(!l.length)return;manualName.value=(l[0].name&&l[0].name[0])||'';manualPhone.value=normalizeIsraeliPhone(l[0].tel?.[0]?.number||'')}catch(e){console.log('Contacts API not available')}};
-function normalizeIsraeliPhone(v){let p=String(v).replace(/\D/g,'');if(p.startsWith('972'))p='0'+p.slice(3);return p};
-function addMinutesToTime(time,minutesToAdd){const [h,m]=String(time).split(':').map(Number),total=h*60+m+Number(minutesToAdd||0);return `${String(Math.floor(total/60)%24).padStart(2,'0')}:${String(total%60).padStart(2,'0')}`};
-async function createManualAppointment(){const p={customerName:manualName.value.trim(),customerPhone:normalizeIsraeliPhone(manualPhone.value),service:manualService.value,date:manualDate.value,time:manualTime.value,endTime:addMinutesToTime(manualTime.value,30)};if(!p.customerName||!p.customerPhone||!p.service||!p.date||!p.time)return showManual('כל השדות חובה','error');const r=await fetch(`${API_URL}/appointments`,{method:'POST',headers:{'Content-Type':'application/json','Authorization':`Bearer ${token}`},body:JSON.stringify(p)});if(r.ok){showManual('תור נוצר בהצלחה!','success');manualName.value='';manualPhone.value='';manualService.value='';manualDate.value='';manualTime.value='';loadAppointments()}else showManual('שגיאה ביצירת התור','error')};
-function showManual(text,type){manualMessage.textContent=text;manualMessage.className=`message ${type}`};
-function getAppointmentDateKey(appointment){return new Intl.DateTimeFormat('en-CA',{timeZone:'Asia/Jerusalem',year:'numeric',month:'2-digit',day:'2-digit'}).format(new Date(appointment.date))};
-function appointmentStatusLabel(status){return({pending:'ממתין לאישור','awaiting-deposit':'ממתין לערבון',confirmed:'מאושר סופית',cancelled:'בוטל',completed:'הושלם'}[status]||status)};
-function renderAppointments(list){const t=document.querySelector('#appointmentsTable tbody');t.innerHTML='';appointmentCount.textContent=`${list.length} תורים`;if(list.length===0){t.innerHTML='<tr class="empty-row"><td colspan="9">אין תורים</td></tr>';return}list.forEach(a=>{const endTime=addMinutesToTime(a.time,a.serviceDuration||30);t.innerHTML+=`<tr><td>${a.customerName}</td><td>${a.customerPhone}</td><td>${a.service}</td><td>${a.serviceDuration}</td><td>${a.date}</td><td>${a.time}</td><td>${endTime}</td><td>${appointmentStatusLabel(a.status)}</td><td><button class="secondary-btn" onclick="openEditModal('${a._id}')">ערוך</button>${a.status==='pending'?`<button class="approve-btn" onclick="approveAppointment('${a._id}')">אשר</button><button class="reject-btn" onclick="rejectAppointment('${a._id}')">דחה</button>`:''}${a.status!=='completed'?`<button class="delete-btn" onclick="deleteAppointment('${a._id}')">מחק</button>`:''}</td></tr>`)})};
-async function loadAppointments(){const r=await fetch(`${API_URL}/appointments`,{headers:{Authorization:`Bearer ${token}`}}),d=await r.json();appointmentsCache=d.data||[];filterAppointmentsByDate()};
-function filterAppointmentsByDate(){const selectedDate=appointmentDateFilter.value;const filtered=selectedDate?appointmentsCache.filter(a=>getAppointmentDateKey(a)===selectedDate):appointmentsCache;renderAppointments(filtered)};
-function clearAppointmentDateFilter(){appointmentDateFilter.value='';renderAppointments(appointmentsCache)};
-async function updatePendingAppointment(id,status,reason=''){const a=appointmentsCache.find(x=>x._id===id);if(!a)return;const p={customerName:a.customerName,customerPhone:a.customerPhone,service:a.service,date:a.date,time:a.time,endTime:addMinutesToTime(a.time,a.serviceDuration||30),status,cancellationReason:reason};const r=await fetch(`${API_URL}/appointments/${id}`,{method:'PUT',headers:{'Content-Type':'application/json','Authorization':`Bearer ${token}`},body:JSON.stringify(p)});if(r.ok)loadAppointments();else alert('שגיאה בעדכון')};
-function approveAppointment(id){if(confirm('לאשר את התור?'))updatePendingAppointment(id,'confirmed')};
-function rejectAppointment(id){const reason=prompt('סיבת הדחייה (אופציונלי):');if(reason===null)return;updatePendingAppointment(id,'cancelled',reason.trim())};
-function openEditModal(id){const a=appointmentsCache.find(x=>x._id===id);if(!a)return;editId.value=a._id;editName.value=a.customerName;editPhone.value=a.customerPhone;editService.value=a.service;editDate.value=a.date;editTime.value=a.time;editModal.classList.add('open')};
-function closeEditModal(){editModal.classList.remove('open')};
-async function saveAppointmentEdit(){const p={customerName:editName.value.trim(),customerPhone:normalizeIsraeliPhone(editPhone.value),service:editService.value,date:editDate.value,time:editTime.value,endTime:addMinutesToTime(editTime.value,30)};const r=await fetch(`${API_URL}/appointments/${editId.value}`,{method:'PUT',headers:{'Content-Type':'application/json','Authorization':`Bearer ${token}`},body:JSON.stringify(p)});if(r.ok){closeEditModal();loadAppointments()}else alert('שגיאה בעדכון')};
-async function deleteAppointment(id){if(!confirm('למחוק תור?'))return;await fetch(`${API_URL}/appointments/${id}`,{method:'DELETE',headers:{Authorization:`Bearer ${token}`}});loadAppointments()};
-async function loadGallery(){try{const r=await fetch(`${API_URL}/gallery`),imgs=await r.json();galleryContainer.innerHTML='';imgs.forEach(i=>galleryContainer.innerHTML+=`<div class="gallery-item-admin"><img src="${i.image}" alt="Gallery"><button class="delete-btn" onclick="deleteGalleryImage('${i._id}')">מחק</button></div>`)}catch(e){console.error('Error loading gallery:',e)}};
-async function uploadImage(){const file=imageInput.files[0];if(!file)return alert('בחר תמונה');const formData=new FormData();formData.append('image',file);try{const r=await fetch(`${API_URL}/gallery`,{method:'POST',headers:{Authorization:`Bearer ${token}`},body:formData});if(r.ok){imageInput.value='';galleryMessage.textContent='תמונה הועלתה בהצלחה!';galleryMessage.className='message success';loadGallery();setTimeout(()=>galleryMessage.textContent='',3000)}else galleryMessage.textContent='שגיאה בהעלאה';galleryMessage.className='message error'}catch(e){console.error('Upload error:',e);galleryMessage.textContent='שגיאה בחיבור';galleryMessage.className='message error'}};
-async function deleteGalleryImage(id){if(!confirm('למחוק תמונה?'))return;try{const r=await fetch(`${API_URL}/gallery/${id}`,{method:'DELETE',headers:{Authorization:`Bearer ${token}`}});if(r.ok){loadGallery();galleryMessage.textContent='תמונה נמחקה בהצלחה!';galleryMessage.className='message success';setTimeout(()=>galleryMessage.textContent='',3000)}else galleryMessage.textContent='שגיאה במחיקה';galleryMessage.className='message error'}catch(e){console.error('Delete error:',e);galleryMessage.textContent='שגיאה בחיבור';galleryMessage.className='message error'}};
-function escapeHtml(v){return String(v??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#039;'}[c]))};
-function logout(){localStorage.removeItem('token');location.href='admin.html'}
+const API_URL = ['localhost', '127.0.0.1'].includes(window.location.hostname) 
+  ? 'http://localhost:5001/api' 
+  : '/api';
+const token = localStorage.getItem('token');
+if (!token) {
+  location.href = 'admin.html';
+}
+
+let servicesCache = [];
+let appointmentsCache = [];
+
+document.addEventListener('DOMContentLoaded', () => {
+  console.log('Dashboard loaded, API_URL:', API_URL);
+  loadServices();
+  loadAppointments();
+  loadGallery();
+  loadWorkingHours();
+  
+  const manualDate = document.getElementById('manualDate');
+  if (manualDate) {
+    manualDate.min = new Date().toISOString().split('T')[0];
+  }
+  
+  const appointmentDateFilter = document.getElementById('appointmentDateFilter');
+  if (appointmentDateFilter) {
+    appointmentDateFilter.addEventListener('change', filterAppointmentsByDate);
+  }
+});
+
+async function loadWorkingHours() {
+  try {
+    const r = await fetch(`${API_URL}/settings`);
+    const d = await r.json();
+    const c = document.getElementById('workingHoursContainer');
+    c.innerHTML = '';
+    
+    const dayNames = {
+      sunday: 'ראשון',
+      monday: 'שני',
+      tuesday: 'שלישי',
+      wednesday: 'רביעי',
+      thursday: 'חמישי',
+      friday: 'שישי',
+      saturday: 'שבת'
+    };
+    
+    Object.keys(dayNames).forEach(day => {
+      const s = d.workingHours?.[day] || {};
+      c.innerHTML += `
+        <div style="margin-bottom:12px;padding:12px;background:#f9f5f1;border-radius:8px">
+          <label style="font-weight:600">${dayNames[day]}</label>
+          <div style="margin-top:8px">
+            <input type="time" id="${day}_start" value="${s.start || '09:00'}" style="width:100px"> 
+            עד 
+            <input type="time" id="${day}_end" value="${s.end || '18:00'}" style="width:100px">
+            <label style="margin-inline-start:10px">
+              <input type="checkbox" id="${day}_enabled" ${s.enabled !== false ? 'checked' : ''}> פעיל
+            </label>
+            <button class="secondary-btn" style="font-size:12px;padding:6px" onclick="addBreak('${day}')">+ הפסקה</button>
+          </div>
+          <div id="${day}_breaks" style="margin-top:8px"></div>
+          ${s.breaks?.map((b, i) => `
+            <div>
+              <input type="time" value="${b.start}" id="${day}_breakStart_${i}"> - 
+              <input type="time" value="${b.end}" id="${day}_breakEnd_${i}">
+            </div>
+          `).join('') || ''}
+        </div>
+      `;
+    });
+  } catch (e) {
+    console.error('Error loading working hours:', e);
+  }
+}
+
+async function saveWorkingHours() {
+  const out = {};
+  const days = ['sunday', 'monday', 'tuesday', 'wednesday', 'thursday', 'friday', 'saturday'];
+  
+  days.forEach(day => {
+    const breaks = [];
+    document.querySelectorAll(`[id^="${day}_breakStart"]`).forEach((el, i) => {
+      const s = el.value;
+      const e = document.getElementById(`${day}_breakEnd_${i}`).value;
+      if (s && e) {
+        breaks.push({ start: s, end: e });
+      }
+    });
+    
+    out[day] = {
+      start: document.getElementById(`${day}_start`).value,
+      end: document.getElementById(`${day}_end`).value,
+      breaks,
+      enabled: document.getElementById(`${day}_enabled`).checked
+    };
+  });
+  
+  try {
+    const r = await fetch(`${API_URL}/settings`, {
+      method: 'PUT',
+      headers: {
+        'Content-Type': 'application/json',
+        'Authorization': `Bearer ${token}`
+      },
+      body: JSON.stringify({ workingHours: out })
+    });
+    if (r.ok) {
+      alert('שעות עודכנו בהצלחה!');
+    }
+  } catch (e) {
+    console.error('Error saving working hours:', e);
+  }
+}
+
+function addBreak(day) {
+  const c = document.getElementById(`${day}_breaks`);
+  const i = Date.now();
+  c.insertAdjacentHTML('beforeend', `
+    <div>
+      <input type="time" id="${day}_breakStart_${i}"> - 
+      <input type="time" id="${day}_breakEnd_${i}">
+    </div>
+  `);
+}
+
+async function loadServices() {
+  try {
+    const r = await fetch(`${API_URL}/services`);
+    servicesCache = await r.json();
+    
+    const t = document.querySelector('#servicesTable tbody');
+    t.innerHTML = '';
+    
+    const manualService = document.getElementById('manualService');
+    manualService.innerHTML = '<option value="">בחר שירות</option>';
+    
+    const editService = document.getElementById('editService');
+    editService.innerHTML = '';
+    
+    servicesCache.forEach(s => {
+      t.innerHTML += `
+        <tr>
+          <td>${s.name}</td>
+          <td>${s.price}</td>
+          <td>${s.depositAmount}</td>
+          <td>${s.duration}</td>
+          <td>
+            <button class="delete-btn" onclick="deleteService('${s._id}')">מחק</button>
+          </td>
+        </tr>
+      `;
+      
+      const opt = document.createElement('option');
+      opt.value = s.name;
+      opt.textContent = s.name;
+      manualService.appendChild(opt);
+      
+      const opt2 = document.createElement('option');
+      opt2.value = s.name;
+      opt2.textContent = s.name;
+      editService.appendChild(opt2);
+    });
+  } catch (e) {
+    console.error('Error loading services:', e);
+  }
+}
+
+async function addService() {
+  const serviceNameInput = document.getElementById('serviceNameInput');
+  const servicePriceInput = document.getElementById('servicePriceInput');
+  const serviceDepositInput = document.getElementById('serviceDepositInput');
+  const serviceDurationInput = document.getElementById('serviceDurationInput');
+  
+  const p = {
+    name: serviceNameInput.value.trim(),
+    price: Number(servicePriceInput.value),
+    depositAmount: Number(serviceDepositInput.value),
+    duration: Number(serviceDurationInput.value)
+  };
+  
+  if (!p.name) return alert('שם שירות חובה');
+  
+  try {
+    const r = await fetch(`${API_URL}/services`, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        'Authorization': `Bearer ${token}`
+      },
+      body: JSON.stringify(p)
+    });
+    if (r.ok) {
+      serviceNameInput.value = '';
+      servicePriceInput.value = '';
+      serviceDepositInput.value = '';
+      serviceDurationInput.value = '';
+      loadServices();
+    } else {
+      alert('שגיאה בהוספת שירות');
+    }
+  } catch (e) {
+    console.error('Error adding service:', e);
+    alert('שגיאה בחיבור');
+  }
+}
+
+async function deleteService(id) {
+  if (!confirm('למחוק שירות?')) return;
+  try {
+    await fetch(`${API_URL}/services/${id}`, {
+      method: 'DELETE',
+      headers: { 'Authorization': `Bearer ${token}` }
+    });
+    loadServices();
+  } catch (e) {
+    console.error('Error deleting service:', e);
+  }
+}
+
+async function pickContact() {
+  try {
+    const l = await navigator.contacts.select(['name', 'tel'], { multiple: false });
+    if (!l.length) return;
+    document.getElementById('manualName').value = (l[0].name && l[0].name[0]) || '';
+    document.getElementById('manualPhone').value = normalizeIsraeliPhone(l[0].tel?.[0]?.number || '');
+  } catch (e) {
+    console.log('Contacts API not available');
+  }
+}
+
+function normalizeIsraeliPhone(v) {
+  let p = String(v).replace(/\D/g, '');
+  if (p.startsWith('972')) p = '0' + p.slice(3);
+  return p;
+}
+
+function addMinutesToTime(time, minutesToAdd) {
+  const [h, m] = String(time).split(':').map(Number);
+  const total = h * 60 + m + Number(minutesToAdd || 0);
+  const endHours = Math.floor(total / 60) % 24;
+  const endMinutes = total % 60;
+  return `${String(endHours).padStart(2, '0')}:${String(endMinutes).padStart(2, '0')}`;
+}
+
+async function createManualAppointment() {
+  const manualName = document.getElementById('manualName');
+  const manualPhone = document.getElementById('manualPhone');
+  const manualService = document.getElementById('manualService');
+  const manualDate = document.getElementById('manualDate');
+  const manualTime = document.getElementById('manualTime');
+  
+  const p = {
+    customerName: manualName.value.trim(),
+    customerPhone: normalizeIsraeliPhone(manualPhone.value),
+    service: manualService.value,
+    date: manualDate.value,
+    time: manualTime.value,
+    endTime: addMinutesToTime(manualTime.value, 30)
+  };
+  
+  if (!p.customerName || !p.customerPhone || !p.service || !p.date || !p.time) {
+    return showManual('כל השדות חובה', 'error');
+  }
+  
+  try {
+    const r = await fetch(`${API_URL}/appointments`, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        'Authorization': `Bearer ${token}`
+      },
+      body: JSON.stringify(p)
+    });
+    if (r.ok) {
+      showManual('תור נוצר בהצלחה!', 'success');
+      manualName.value = '';
+      manualPhone.value = '';
+      manualService.value = '';
+      manualDate.value = '';
+      manualTime.value = '';
+      loadAppointments();
+    } else {
+      showManual('שגיאה ביצירת התור', 'error');
+    }
+  } catch (e) {
+    console.error('Error creating appointment:', e);
+    showManual('שגיאה בחיבור', 'error');
+  }
+}
+
+function showManual(text, type) {
+  const manualMessage = document.getElementById('manualMessage');
+  manualMessage.textContent = text;
+  manualMessage.className = `message ${type}`;
+}
+
+function getAppointmentDateKey(appointment) {
+  return new Intl.DateTimeFormat('en-CA', {
+    timeZone: 'Asia/Jerusalem',
+    year: 'numeric',
+    month: '2-digit',
+    day: '2-digit'
+  }).format(new Date(appointment.date));
+}
+
+function appointmentStatusLabel(status) {
+  const labels = {
+    'pending': 'ממתין לאישור',
+    'awaiting-deposit': 'ממתין לערבון',
+    'confirmed': 'מאושר סופית',
+    'cancelled': 'בוטל',
+    'completed': 'הושלם'
+  };
+  return labels[status] || status;
+}
+
+function renderAppointments(list) {
+  const t = document.querySelector('#appointmentsTable tbody');
+  t.innerHTML = '';
+  const appointmentCount = document.getElementById('appointmentCount');
+  appointmentCount.textContent = `${list.length} תורים`;
+  
+  if (list.length === 0) {
+    t.innerHTML = '<tr class="empty-row"><td colspan="9">אין תורים</td></tr>';
+    return;
+  }
+  
+  list.forEach(a => {
+    const endTime = addMinutesToTime(a.time, a.serviceDuration || 30);
+    t.innerHTML += `
+      <tr>
+        <td>${a.customerName}</td>
+        <td>${a.customerPhone}</td>
+        <td>${a.service}</td>
+        <td>${a.serviceDuration}</td>
+        <td>${a.date}</td>
+        <td>${a.time}</td>
+        <td>${endTime}</td>
+        <td>${appointmentStatusLabel(a.status)}</td>
+        <td>
+          <button class="secondary-btn" onclick="openEditModal('${a._id}')">ערוך</button>
+          ${a.status === 'pending' ? `
+            <button class="approve-btn" onclick="approveAppointment('${a._id}')">אשר</button>
+            <button class="reject-btn" onclick="rejectAppointment('${a._id}')">דחה</button>
+          ` : ''}
+          ${a.status !== 'completed' ? `
+            <button class="delete-btn" onclick="deleteAppointment('${a._id}')">מחק</button>
+          ` : ''}
+        </td>
+      </tr>
+    `;
+  });
+}
+
+async function loadAppointments() {
+  try {
+    const r = await fetch(`${API_URL}/appointments`, {
+      headers: { 'Authorization': `Bearer ${token}` }
+    });
+    const d = await r.json();
+    appointmentsCache = d.data || [];
+    filterAppointmentsByDate();
+  } catch (e) {
+    console.error('Error loading appointments:', e);
+  }
+}
+
+function filterAppointmentsByDate() {
+  const appointmentDateFilter = document.getElementById('appointmentDateFilter');
+  const selectedDate = appointmentDateFilter.value;
+  const filtered = selectedDate 
+    ? appointmentsCache.filter(a => getAppointmentDateKey(a) === selectedDate)
+    : appointmentsCache;
+  renderAppointments(filtered);
+}
+
+function clearAppointmentDateFilter() {
+  const appointmentDateFilter = document.getElementById('appointmentDateFilter');
+  appointmentDateFilter.value = '';
+  renderAppointments(appointmentsCache);
+}
+
+async function updatePendingAppointment(id, status, reason = '') {
+  const a = appointmentsCache.find(x => x._id === id);
+  if (!a) return;
+  
+  const p = {
+    customerName: a.customerName,
+    customerPhone: a.customerPhone,
+    service: a.service,
+    date: a.date,
+    time: a.time,
+    endTime: addMinutesToTime(a.time, a.serviceDuration || 30),
+    status,
+    cancellationReason: reason
+  };
+  
+  try {
+    const r = await fetch(`${API_URL}/appointments/${id}`, {
+      method: 'PUT',
+      headers: {
+        'Content-Type': 'application/json',
+        'Authorization': `Bearer ${token}`
+      },
+      body: JSON.stringify(p)
+    });
+    if (r.ok) {
+      loadAppointments();
+    } else {
+      alert('שגיאה בעדכון');
+    }
+  } catch (e) {
+    console.error('Error updating appointment:', e);
+  }
+}
+
+function approveAppointment(id) {
+  if (confirm('לאשר את התור?')) {
+    updatePendingAppointment(id, 'confirmed');
+  }
+}
+
+function rejectAppointment(id) {
+  const reason = prompt('סיבת הדחייה (אופציונלי):');
+  if (reason === null) return;
+  updatePendingAppointment(id, 'cancelled', reason.trim());
+}
+
+function openEditModal(id) {
+  const a = appointmentsCache.find(x => x._id === id);
+  if (!a) return;
+  
+  document.getElementById('editId').value = a._id;
+  document.getElementById('editName').value = a.customerName;
+  document.getElementById('editPhone').value = a.customerPhone;
+  document.getElementById('editService').value = a.service;
+  document.getElementById('editDate').value = a.date;
+  document.getElementById('editTime').value = a.time;
+  document.getElementById('editModal').classList.add('open');
+}
+
+function closeEditModal() {
+  document.getElementById('editModal').classList.remove('open');
+}
+
+async function saveAppointmentEdit() {
+  const p = {
+    customerName: document.getElementById('editName').value.trim(),
+    customerPhone: normalizeIsraeliPhone(document.getElementById('editPhone').value),
+    service: document.getElementById('editService').value,
+    date: document.getElementById('editDate').value,
+    time: document.getElementById('editTime').value,
+    endTime: addMinutesToTime(document.getElementById('editTime').value, 30)
+  };
+  
+  try {
+    const r = await fetch(`${API_URL}/appointments/${document.getElementById('editId').value}`, {
+      method: 'PUT',
+      headers: {
+        'Content-Type': 'application/json',
+        'Authorization': `Bearer ${token}`
+      },
+      body: JSON.stringify(p)
+    });
+    if (r.ok) {
+      closeEditModal();
+      loadAppointments();
+    } else {
+      alert('שגיאה בעדכון');
+    }
+  } catch (e) {
+    console.error('Error saving appointment:', e);
+  }
+}
+
+async function deleteAppointment(id) {
+  if (!confirm('למחוק תור?')) return;
+  try {
+    await fetch(`${API_URL}/appointments/${id}`, {
+      method: 'DELETE',
+      headers: { 'Authorization': `Bearer ${token}` }
+    });
+    loadAppointments();
+  } catch (e) {
+    console.error('Error deleting appointment:', e);
+  }
+}
+
+async function loadGallery() {
+  try {
+    const r = await fetch(`${API_URL}/gallery`);
+    const imgs = await r.json();
+    const galleryContainer = document.getElementById('galleryContainer');
+    galleryContainer.innerHTML = '';
+    
+    imgs.forEach(i => {
+      galleryContainer.innerHTML += `
+        <div class="gallery-item-admin">
+          <img src="${i.image}" alt="Gallery">
+          <button class="delete-btn" onclick="deleteGalleryImage('${i._id}')">מחק</button>
+        </div>
+      `;
+    });
+  } catch (e) {
+    console.error('Error loading gallery:', e);
+  }
+}
+
+async function uploadImage() {
+  const imageInput = document.getElementById('imageInput');
+  const file = imageInput.files[0];
+  if (!file) return alert('בחר תמונה');
+  
+  const formData = new FormData();
+  formData.append('image', file);
+  
+  try {
+    const r = await fetch(`${API_URL}/gallery`, {
+      method: 'POST',
+      headers: { 'Authorization': `Bearer ${token}` },
+      body: formData
+    });
+    
+    const galleryMessage = document.getElementById('galleryMessage');
+    if (r.ok) {
+      imageInput.value = '';
+      galleryMessage.textContent = 'תמונה הועלתה בהצלחה!';
+      galleryMessage.className = 'message success';
+      loadGallery();
+      setTimeout(() => galleryMessage.textContent = '', 3000);
+    } else {
+      galleryMessage.textContent = 'שגיאה בהעלאה';
+      galleryMessage.className = 'message error';
+    }
+  } catch (e) {
+    console.error('Upload error:', e);
+    const galleryMessage = document.getElementById('galleryMessage');
+    galleryMessage.textContent = 'שגיאה בחיבור';
+    galleryMessage.className = 'message error';
+  }
+}
+
+async function deleteGalleryImage(id) {
+  if (!confirm('למחוק תמונה?')) return;
+  try {
+    const r = await fetch(`${API_URL}/gallery/${id}`, {
+      method: 'DELETE',
+      headers: { 'Authorization': `Bearer ${token}` }
+    });
+    
+    const galleryMessage = document.getElementById('galleryMessage');
+    if (r.ok) {
+      loadGallery();
+      galleryMessage.textContent = 'תמונה נמחקה בהצלחה!';
+      galleryMessage.className = 'message success';
+      setTimeout(() => galleryMessage.textContent = '', 3000);
+    } else {
+      galleryMessage.textContent = 'שגיאה במחיקה';
+      galleryMessage.className = 'message error';
+    }
+  } catch (e) {
+    console.error('Delete error:', e);
+    const galleryMessage = document.getElementById('galleryMessage');
+    galleryMessage.textContent = 'שגיאה בחיבור';
+    galleryMessage.className = 'message error';
+  }
+}
+
+function logout() {
+  localStorage.removeItem('token');
+  location.href = 'admin.html';
+}
 </script>
 </body>
 </html>
