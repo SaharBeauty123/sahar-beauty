@@ -21,7 +21,7 @@
     .gallery-item{position:relative;overflow:hidden;height:280px;background:var(--sand);cursor:zoom-in}
     .gallery-item img{width:100%;height:100%;object-fit:cover;display:block;filter:saturate(.78);transition:transform .7s cubic-bezier(.2,.75,.25,1),filter .4s ease}
     .gallery-item:hover img{transform:scale(1.035);filter:saturate(.9)}
-    .gallery-item:after{content:'View';position:absolute;inset:auto 18px 16px auto;padding:7px 12px;background:rgba(253,249,245,.88);color:var(--espresso);font-size:9px;letter-spacing:.14em;text-transform:uppercase;opacity:0;transform:translateY(5px);transition:.3s}
+    .gallery-item:after{content:'View';position:absolute;inset:auto 18px 16px auto;padding:7px 12px;background:rgba(253,249,245,.88);color:var(--espresso);font-size:9px;letter-spacing:.14em;text-transform:uppercase;opacity:0;transform:translateY(6px);transition:all .3s ease}
     .gallery-item:hover:after{opacity:1;transform:none}
     .gallery-empty{grid-column:1/-1;padding:90px 20px;text-align:center;color:var(--muted);font:400 28px var(--serif)}
     .success-banner{max-width:700px;margin:0 auto 30px;padding:14px;background:#eef5ec;color:#315c34;border:1px solid #c9dec6;text-align:center}
@@ -30,7 +30,7 @@
     .gallery-modal img{max-width:min(1100px,94vw);max-height:90vh;object-fit:contain}
     .modal-close{position:absolute;top:22px;right:25px;border:0;background:transparent;color:#fff;font:300 35px var(--serif);cursor:pointer}
     @media(max-width:900px){.gallery-grid{grid-template-columns:repeat(auto-fill,minmax(190px,1fr))}.gallery-item{height:250px}}
-    @media(max-width:600px){.gallery-hero{padding-top:180px}.gallery-hero h1{font-size:78px}.gallery-grid{grid-template-columns:repeat(2,minmax(0,1fr));gap:10px}.gallery-item{height:210px}.gallery-item:after{opacity:1;transform:none}}
+    @media(max-width:600px){.gallery-hero{padding-top:180px}.gallery-hero h1{font-size:78px}.gallery-grid{grid-template-columns:repeat(2,minmax(0,1fr));gap:10px}.gallery-item{height:210px}.modal-close{font-size:28px}}
   </style>
 </head>
 <body class="gallery-page">
@@ -76,57 +76,123 @@
     <button class="modal-close" type="button" aria-label="Close">×</button>
     <img id="modalImage" alt="Sahar Beauty portfolio">
   </div>
-  <a class="whatsapp-float" href="https://wa.me/972538800769" target="_blank" rel="noopener" aria-label="Chat on WhatsApp"><svg viewBox="0 0 32 32" width="27" height="27" aria-hidden="true" focusable="false"><path fill="currentColor" d="M16 3a12.8 12.8 0 0 0-11 19.4L3.5 28l5.8-1.5A12.9 12.9 0 1 0 16 3Zm0 2.3a10.5 10.5 0 1 1-5.4 19.5l-.4-.2-3.4.9.9-3.3-.3-.5A10.5 10.5 0 0 1 16 5.3Zm-4.6 4.9c-.3 0-.7.1-1 .5-.4.4-1.3 1.3-1.3 3.1 0 1.8 1.3 3.6 1.5 3.8.2.3 2.6 4 6.4 5.5 3.1 1.2 3.8 1 4.5.9.7-.1 2.3-1 2.6-1.9.3-.9.3-1.7.2-1.9-.1-.2-.4-.3-.8-.5l-2.7-1.3c-.4-.2-.7-.3-1 .3l-1.2 1.5c-.2.3-.5.3-.9.1a8.6 8.6 0 0 1-2.6-1.6 9.7 9.7 0 0 1-1.8-2.3c-.2-.4 0-.6.2-.8l.6-.7.4-.7c.1-.3 0-.5 0-.7l-1.2-2.8c-.3-.7-.7-.7-.9-.7h-1Z"/></svg></a>
+  <a class="whatsapp-float" href="https://wa.me/972538800769" target="_blank" rel="noopener" aria-label="Chat on WhatsApp"><svg viewBox="0 0 32 32" width="27" height="27" aria-hidden="true" focusable="false"><path fill="currentColor" d="M16 0C7.16 0 0 7.16 0 16c0 2.73.71 5.32 1.95 7.57L0 32l8.64-1.89C10.95 31.18 13.41 32 16 32c8.84 0 16-7.16 16-16S24.84 0 16 0zm0 30c-2.2 0-4.36-.5-6.3-1.46l-.45-.25-4.7 1.03 1.05-4.56-.27-.44C2.3 20.63 1.99 18.37 1.99 16c0-7.73 6.29-14 14.01-14 7.71 0 14 6.27 14 14s-6.29 14-14 14zm7.58-8.9c-.42-.21-2.48-1.22-2.87-1.36-.39-.14-.67-.21-.95.21-.28.42-1.09 1.36-1.34 1.64-.25.28-.49.31-.91.1-.42-.21-1.77-.65-3.37-2.08-1.25-1.11-2.09-2.48-2.34-2.9-.25-.42-.03-.64.19-.85.19-.18.42-.47.63-.71.21-.24.28-.41.42-.68.14-.28.07-.52-.04-.73-.11-.21-.95-2.28-1.3-3.12-.34-.83-.69-.71-.95-.72h-.81c-.28 0-.73.1-.11.73-.42.75-.73 1.63-.73 2.52 0 .88.24 1.75.73 2.51l3.37 5.36c3.2 4.93 7.98 6.87 12.45 5.68.42-.11.81-.42 1.02-.83.21-.41.41-.96.55-1.51.14-.55.28-.93.28-1.22 0-.29-.07-.47-.49-.68z"/></svg></a>
 
   <script>
-    const LOCAL_GALLERY_IMAGES = [
-      'images/sahar-hero.png',
-      'images/ChatGPT-Image-Jun-22-2026-12_44_23-PM-600x600.png',
-      'images/WhatsApp-Image-2024-05-16-at-18.44.15.webp',
-      'images/images.jpg',
-      'images/קסשצפךק.jpg'
-    ];
+    const API_URL = ['localhost', '127.0.0.1'].includes(window.location.hostname)
+      ? 'http://localhost:5001/api'
+      : '/api';
+
     const grid = document.getElementById('galleryGrid');
     const modal = document.getElementById('imageModal');
     const modalImage = document.getElementById('modalImage');
     const galleryTranslations = {
-      he:{navAbout:'אודות',navServices:'שירותים',navPortfolio:'גלריה',navReviews:'המלצות',navContact:'יצירת קשר',bookNow:'קבעי תור',portfolioIntro:'אוסף של יופי על־זמני ורגעי כלה בלתי נשכחים.'},
-      ar:{navAbout:'من أنا',navServices:'الخدمات',navPortfolio:'الأعمال',navReviews:'آراء العميلات',navContact:'تواصل',bookNow:'احجزي الآن',portfolioIntro:'مجموعة من الجمال الخالد ولحظات العروس التي لا تُنسى.'},
-      en:{navAbout:'About',navServices:'Services',navPortfolio:'Portfolio',navReviews:'Reviews',navContact:'Contact',bookNow:'Book Now',portfolioIntro:'A collection of timeless beauty and unforgettable bridal moments.'}
+      he: {
+        navAbout: 'אודות',
+        navServices: 'שירותים',
+        navPortfolio: 'גלריה',
+        navReviews: 'המלצות',
+        navContact: 'יצירת קשר',
+        bookNow: 'קבעי תור',
+        portfolioIntro: 'אוסף של רגעים זמורים ולא שכיחים של כלות'
+      },
+      ar: {
+        navAbout: 'من أنا',
+        navServices: 'الخدمات',
+        navPortfolio: 'الأعمال',
+        navReviews: 'آراء العميلات',
+        navContact: 'تواصل',
+        bookNow: 'احجزي الآن',
+        portfolioIntro: 'مجموعة من لحظات العروس التي لا تُنسى'
+      },
+      en: {
+        navAbout: 'About',
+        navServices: 'Services',
+        navPortfolio: 'Portfolio',
+        navReviews: 'Reviews',
+        navContact: 'Contact',
+        bookNow: 'Book Now',
+        portfolioIntro: 'A collection of timeless beauty and unforgettable bridal moments'
+      }
     };
 
-    function setGalleryLanguage(language){
-      const lang=galleryTranslations[language]?language:'he';
-      document.documentElement.lang=lang;
-      document.documentElement.dir=lang==='en'?'ltr':'rtl';
-      localStorage.setItem('saharLanguage',lang);
-      document.querySelectorAll('[data-gallery-i18n]').forEach(el=>{const value=galleryTranslations[lang][el.dataset.galleryI18n];if(value)el.textContent=value});
-      document.querySelectorAll('[data-lang]').forEach(button=>button.classList.toggle('active',button.dataset.lang===lang));
+    function setGalleryLanguage(language) {
+      const lang = galleryTranslations[language] ? language : 'he';
+      document.documentElement.lang = lang;
+      document.documentElement.dir = lang === 'en' ? 'ltr' : 'rtl';
+      localStorage.setItem('saharLanguage', lang);
+      document.querySelectorAll('[data-gallery-i18n]').forEach(el => {
+        const value = galleryTranslations[lang][el.dataset.galleryI18n];
+        if (value) el.textContent = value;
+      });
+      document.querySelectorAll('[data-lang]').forEach(button => button.classList.toggle('active', button.dataset.lang === lang));
     }
 
-    function loadGallery(){
-        grid.innerHTML='';
-        if(!LOCAL_GALLERY_IMAGES.length){grid.innerHTML='<p class="gallery-empty">Portfolio coming soon.</p>';return}
-        LOCAL_GALLERY_IMAGES.forEach((imagePath,index)=>{
-          const card=document.createElement('article');
-          card.className='gallery-item';
-          card.innerHTML=`<img src="${imagePath}" alt="Sahar Beauty portfolio ${index+1}" loading="lazy">`;
-          card.addEventListener('click',()=>{modalImage.src=imagePath;modal.classList.add('active');document.body.style.overflow='hidden'});
+    async function loadGallery() {
+      grid.innerHTML = '';
+      try {
+        const res = await fetch(`${API_URL}/gallery`);
+        if (!res.ok) throw new Error('Failed to load gallery');
+        const images = await res.json();
+
+        if (!images.length) {
+          grid.innerHTML = '<p class="gallery-empty">Portfolio coming soon.</p>';
+          return;
+        }
+
+        images.forEach((imgData, index) => {
+          const card = document.createElement('article');
+          card.className = 'gallery-item';
+          const img = document.createElement('img');
+          img.src = imgData.image;
+          img.alt = `Sahar Beauty portfolio ${index + 1}`;
+          img.loading = 'lazy';
+          card.appendChild(img);
+          card.addEventListener('click', () => {
+            modalImage.src = imgData.image;
+            modal.classList.add('active');
+            document.body.style.overflow = 'hidden';
+          });
           grid.appendChild(card);
         });
+      } catch (error) {
+        console.error('Error loading gallery:', error);
+        grid.innerHTML = '<p class="gallery-empty">Error loading portfolio.</p>';
+      }
     }
 
-    function closeModal(){modal.classList.remove('active');document.body.style.overflow=''}
+    function closeModal() {
+      modal.classList.remove('active');
+      document.body.style.overflow = '';
+    }
 
-    document.addEventListener('DOMContentLoaded',()=>{
-      setGalleryLanguage(localStorage.getItem('saharLanguage')||'he');
-      document.querySelectorAll('[data-lang]').forEach(button=>button.addEventListener('click',()=>setGalleryLanguage(button.dataset.lang)));
-      const menuButton=document.querySelector('.menu-toggle');
-      const navigation=document.querySelector('.main-nav');
-      menuButton.addEventListener('click',()=>{const open=navigation.classList.toggle('open');menuButton.setAttribute('aria-expanded',String(open))});
-      document.addEventListener('keydown',event=>{if(event.key==='Escape')closeModal()});
-      const message=localStorage.getItem('bookingSuccess');
-      if(message){const banner=document.getElementById('successMessage');banner.textContent=message;banner.hidden=false;localStorage.removeItem('bookingSuccess');setTimeout(()=>banner.hidden=true,4000)}
+    document.addEventListener('DOMContentLoaded', () => {
+      setGalleryLanguage(localStorage.getItem('saharLanguage') || 'he');
+      document.querySelectorAll('[data-lang]').forEach(button => button.addEventListener('click', () => setGalleryLanguage(button.dataset.lang)));
+
+      const menuButton = document.querySelector('.menu-toggle');
+      const navigation = document.querySelector('.main-nav');
+      if (menuButton && navigation) {
+        menuButton.addEventListener('click', () => {
+          const isOpen = navigation.classList.toggle('open');
+          menuButton.setAttribute('aria-expanded', String(isOpen));
+        });
+        navigation.querySelectorAll('a').forEach((link) => link.addEventListener('click', () => navigation.classList.remove('open')));
+      }
+
+      document.addEventListener('keydown', event => {
+        if (event.key === 'Escape') closeModal();
+      });
+
+      const message = localStorage.getItem('bookingSuccess');
+      if (message) {
+        const banner = document.getElementById('successMessage');
+        banner.textContent = message;
+        banner.hidden = false;
+        localStorage.removeItem('bookingSuccess');
+        setTimeout(() => banner.hidden = true, 5000);
+      }
+
       loadGallery();
     });
   </script>
