@@ -65,13 +65,7 @@ document.addEventListener("DOMContentLoaded", () => {
   initPhotoLine();
 });
 
-const HOME_GALLERY_IMAGES = [
-  'images/sahar-hero.png',
-  'images/ChatGPT-Image-Jun-22-2026-12_44_23-PM-600x600.png',
-  'images/WhatsApp-Image-2024-05-16-at-18.44.15.webp',
-  'images/images.jpg',
-  'images/קסשצפךק.jpg'
-];
+let HOME_GALLERY_IMAGES = [];
 let photoLineIndex = 0;
 
 function normalizedPhotoIndex(index) {
@@ -114,12 +108,32 @@ function closePhotoLightbox() {
   document.body.style.overflow = '';
 }
 
-function initPhotoLine() {
+async function initPhotoLine() {
   const track = document.getElementById('photoLineTrack');
   const viewport = document.getElementById('photoLineViewport');
   const dots = document.getElementById('photoLineDots');
   const lightbox = document.getElementById('photoLightbox');
   if (!track || !viewport || !dots || !lightbox) return;
+
+  try {
+    const response = await fetch(`${API_URL}/gallery`);
+    const photos = await response.json();
+    if (!response.ok) throw new Error(photos.error || 'Gallery could not be loaded');
+    HOME_GALLERY_IMAGES = Array.isArray(photos)
+      ? photos.map((photo) => photo.image).filter(Boolean)
+      : [];
+  } catch (error) {
+    console.error('Gallery loading failed:', error);
+    HOME_GALLERY_IMAGES = [];
+  }
+
+  if (!HOME_GALLERY_IMAGES.length) {
+    track.textContent = 'Portfolio coming soon.';
+    document.getElementById('photoLinePrev').hidden = true;
+    document.getElementById('photoLineNext').hidden = true;
+    return;
+  }
+
   let suppressSlideClick = false;
 
   HOME_GALLERY_IMAGES.forEach((source, index) => {
